@@ -3,33 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace RogueGem.Controllers {
-    public class WorldController {
-
-        private static Dictionary<Vector2, GameObject> characterMap = new Dictionary<Vector2, GameObject>();     
-
-        public static void SpawnCharacter(GameObject character, Vector2 pos) {
-            characterMap.Add(pos, character);
-        }
-
-        public static void MoveCharacterPos(GameObject character, Vector2 oldPos, Vector2 newPos) {
-            characterMap.Remove(oldPos);
-            characterMap.Add(newPos, character);
-        }
-
-        public static void RemoveCharacterOnPos(Vector2 pos) {
-            characterMap.Remove(pos);
-        }
+    public class WorldController {       
 
         public static GameObject GetCharacterOnPos(Vector2 pos) {
-            return characterMap[pos];
+            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.down);
+            if(hit.collider != null) {
+                return hit.transform.gameObject;
+            }
+            return null;
         }
 
-        public static bool CheckCharacterExistsOnPos(Vector2 pos) {            
-            return characterMap.ContainsKey(pos);
-        }
-
-        public static void Reset() {
-            characterMap.Clear();
+        public static bool CheckCharacterExistsOnPos(Vector2 pos) {
+            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
+            return hit.collider != null;
         }
     }
 }

@@ -38,5 +38,9 @@ namespace RogueGem.Enemies {
         public GameObject GetPrefab() {
             return Resources.Load("Prefabs/Bubugg") as GameObject;
         }
+
+        public void RecieveDamage(int damage) {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -11,7 +11,6 @@ namespace RogueGem.Utilities {
             Vector2 pos = new Vector2(Random.Range(-8, 8), Random.Range(-4, 4));
             GameObject enemy = EnemyFactory.GetEnemy().GetPrefab();
             Instantiate(enemy, pos, Quaternion.identity);
-            WorldController.SpawnCharacter(enemy, pos);
         }
     }
 }

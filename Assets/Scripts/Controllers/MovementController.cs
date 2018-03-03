@@ -17,7 +17,7 @@ namespace RogueGem.Controllers {
         public void MoveByTile(GameObject entity, int xPos, int yPos) {
             Vector2 destinationPos = new Vector2(entity.transform.position.x + xPos, entity.transform.position.y + yPos);
 
-            if (WorldController.CheckCharacterExistsOnPos(destinationPos)) {
+            if (WorldController.CheckCharacterExistsOnPos(destinationPos)) {                
                 GameObject characterOnPos = WorldController.GetCharacterOnPos(destinationPos);
                 
                 if (IsEnemy(entity, characterOnPos)) {
