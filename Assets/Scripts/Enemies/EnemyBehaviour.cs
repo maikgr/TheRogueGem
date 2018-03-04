@@ -4,24 +4,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using RogueGem.Items;
+using RogueGem.Utilities;
 
 namespace RogueGem.Enemies {
-    public class EnemyBehaviour : MonoBehaviour{
+    public abstract class EnemyBehaviour : CreatureBehaviour{
 
-        private ICreature creature;
         private MovementController movementControl;
-        void Start() {
-            creature = gameObject.GetComponent<ICreature>();
-            movementControl = new MovementController(this);
+        protected EnemyState state;
+        public override void ReceiveDamage(int damage) {
+            currentHp = currentHp - (Mathf.Max(0, damage - GetDEF()));
+            if (currentHp <= 1 && state.Equals(EnemyState.Normal)) {
+                currentHp = 1;
+                state = EnemyState.Fainted;
+            } else if (state.Equals(EnemyState.Fainted)) {
+                currentHp = 0;
+                state = EnemyState.Dead;
+            }
         }
 
+        void Start() {
+            movementControl = new MovementController(this);                               
+        }
+        
         void Update() {
-            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)
-                || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S)
-                || Input.GetKeyDown(KeyCode.Space)) {
-                Vector2 destination = creature.GetDestination();
-                movementControl.MoveByTile(gameObject, (int)destination.x, (int)destination.y);
+            if (!EventBehaviour.instance.isPlayerTurn) {
+                Move();
             }
+        }
+
+        private void Move() {
+            Vector2 destination = GetDestination();
+            movementControl.MoveByTile(gameObject, (int)destination.x, (int)destination.y);
         }
     }
 }

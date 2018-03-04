@@ -3,9 +3,9 @@
 namespace RogueGem.Enemies {
     public class EnemyFactory {
 
-        public static ICreature GetEnemy() {
-            ICreature[] enemies = new ICreature[] { new Skully()};
-            return enemies[Random.Range(0, enemies.Length)];
+        public static GameObject GetEnemy() {
+            GameObject enemies = Resources.Load("Prefabs/Skully") as GameObject;
+            return enemies;
         }
     }
 }

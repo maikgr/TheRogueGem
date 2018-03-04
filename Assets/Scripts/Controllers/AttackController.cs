@@ -8,7 +8,7 @@ using UnityEngine;
 namespace RogueGem.Controllers {
     public class AttackController {
 
-        public static void Attack(ICreature attacker, ICreature defender) {
+        public static void Attack(CreatureBehaviour attacker, CreatureBehaviour defender) {
 
         }
     }

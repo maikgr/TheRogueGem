@@ -1,35 +1,67 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using RogueGem.Enemies;
+using RogueGem.Items;
 using UnityEngine;
+using UnityEngine.Events;
+using RogueGem.Utilities;
 
 namespace RogueGem.Controllers {
-    public class PlayerBehaviour : MonoBehaviour {
+    public class PlayerBehaviour : CreatureBehaviour {
 
         private MovementController movementControl;
         private int atk;
         private int def;
         private int crit;
         private int maxHp;
-        private int currentHp;
 	    void Start () {
             movementControl = new MovementController(this);
-            atk = 2;
+            atk = 5;
             def = 1;
             crit = 10;
             maxHp = 10;
-            currentHp = maxHp;
 	    }
 	
 	    void Update () {
-		    if (Input.GetKeyDown(KeyCode.D)) {
-                movementControl.MoveByTile(gameObject, 1, 0);
-            } else if (Input.GetKeyDown(KeyCode.A)) {
-                movementControl.MoveByTile(gameObject, -1, 0);
-            } else if (Input.GetKeyDown(KeyCode.W)) {
-                movementControl.MoveByTile(gameObject, 0, 1);
-            } else if (Input.GetKeyDown(KeyCode.S)) {
-                movementControl.MoveByTile(gameObject, 0, -1);
+            if (EventBehaviour.instance.isPlayerTurn) {
+                if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
+                    int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+                    int vertical = (int)(Input.GetAxisRaw("Vertical"));
+                    movementControl.MoveByTile(gameObject, horizontal, vertical);
+                }
             }
+        }
+
+        public override string GetName() {
+            return "Player";
+        }
+
+        public override int GetMaxHP() {
+            return maxHp;
+        }
+
+        public override int GetATK() {
+            return atk;
+        }
+
+        public override int GetDEF() {
+            return def;
+        }
+
+        public override int GetCRIT() {
+            return crit;
+        }
+
+        public override IEnumerable<IItem> GetItemLoot() {
+            return null;
+        }
+
+        public override Vector2 GetDestination() {
+            throw new NotImplementedException();
+        }
+
+        public override void ReceiveDamage(int damage) {
+            currentHp = currentHp - (Mathf.Max(0, damage - GetDEF()));
         }
     }
 }

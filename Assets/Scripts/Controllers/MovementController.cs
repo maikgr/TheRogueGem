@@ -6,7 +6,7 @@ using UnityEngine;
 namespace RogueGem.Controllers {
     public class MovementController {
 
-        private const float moveSpeed = 0.2f;
+        private const float moveTime = 0.2f;
         private MonoBehaviour context;
         private Coroutine animation;
 
@@ -42,11 +42,12 @@ namespace RogueGem.Controllers {
             if (animation == null) {
                 float t = 0;
                 while (t < 1) {
-                    t += Time.deltaTime / moveSpeed;
+                    t += Time.deltaTime / moveTime;
                     entity.transform.position = Vector2.Lerp(entity.transform.position, destination, t);
                     yield return null;
                 }
                 animation = null;
+                EventBehaviour.instance.isPlayerTurn = !EventBehaviour.instance.isPlayerTurn;
             }
         }
 
