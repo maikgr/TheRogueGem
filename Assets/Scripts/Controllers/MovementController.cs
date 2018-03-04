@@ -17,25 +17,28 @@ namespace RogueGem.Controllers {
         public void MoveByTile(GameObject entity, int xPos, int yPos) {
             Vector2 destinationPos = new Vector2(entity.transform.position.x + xPos, entity.transform.position.y + yPos);
 
-            if (WorldController.CheckCharacterExistsOnPos(destinationPos)) {                
+            if (WorldController.CheckCharacterExistsOnPos(destinationPos)) {
                 GameObject characterOnPos = WorldController.GetCharacterOnPos(destinationPos);
-                
+
                 if (IsEnemy(entity, characterOnPos)) {
-                    Attack(entity, xPos, yPos);
+                    context.StartCoroutine(Attack(entity, xPos, yPos));
                 }
             } else {
                 animation = context.StartCoroutine(AnimateMoving(entity, destinationPos));
             }
         }
 
-        private void Attack(GameObject attacker, int xPos, int yPos) {            
+        private IEnumerator Attack(GameObject attacker, int xPos, int yPos) {
             Vector2 initialPos = attacker.transform.position;
-            Vector2 destinationPos = initialPos + (new Vector2(xPos, yPos) * 2f);
-            context.StartCoroutine(Attack(attacker, destinationPos));
-            context.StartCoroutine(Return(attacker, initialPos));
+            Vector2 destinationPos = initialPos + (new Vector2(xPos, yPos) * 0.7f);
+            animation = context.StartCoroutine(AnimateMoving(attacker, destinationPos));
+            while (animation != null) {
+                yield return null;
+            }
+            animation = context.StartCoroutine(AnimateMoving(attacker, initialPos));
         }
 
-        private IEnumerator AnimateMoving(GameObject entity, Vector2 destination) {            
+        private IEnumerator AnimateMoving(GameObject entity, Vector2 destination) {
             if (animation == null) {
                 float t = 0;
                 while (t < 1) {
@@ -44,15 +47,7 @@ namespace RogueGem.Controllers {
                     yield return null;
                 }
                 animation = null;
-            }            
-        }
-
-        private IEnumerator Attack(GameObject attacker, Vector2 destinationPos) {
-            yield return context.StartCoroutine(AnimateMoving(attacker, destinationPos));
-        }
-
-        private IEnumerator Return(GameObject attacker, Vector2 initialPos) {
-            yield return context.StartCoroutine(AnimateMoving(attacker, initialPos));
+            }
         }
 
         private bool IsEnemy(GameObject attacker, GameObject defender) {

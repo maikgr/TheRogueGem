@@ -3,8 +3,8 @@
 namespace RogueGem.Enemies {
     public class EnemyFactory {
 
-        public static IEnemy GetEnemy() {
-            IEnemy[] enemies = new IEnemy[] { new Skully(), new Bubugg() };
+        public static ICreature GetEnemy() {
+            ICreature[] enemies = new ICreature[] { new Skully()};
             return enemies[Random.Range(0, enemies.Length)];
         }
     }

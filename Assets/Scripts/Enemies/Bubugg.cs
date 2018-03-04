@@ -1,45 +1,40 @@
 ﻿using System;
+using System.Collections.Generic;
 using RogueGem.Enemies;
+using RogueGem.Items;
 using UnityEngine;
 
 namespace RogueGem.Enemies {
-    public class Bubugg : IEnemy {
-
-        private int currentHP;
-
-        public Bubugg() {
-            currentHP = GetMaxHP();
+    public class Bubugg : ICreature {
+        public override int GetATK() {
+            throw new NotImplementedException();
         }
 
-        public int GetATK() {
-            return 3;
+        public override int GetCRIT() {
+            throw new NotImplementedException();
         }
 
-        public int GetCRIT() {
-            return 0;
+        public override int GetDEF() {
+            throw new NotImplementedException();
         }
 
-        public int GetCurentHP() {
-            return currentHP;
+        public override Vector2 GetDestination() {
+            throw new NotImplementedException();
         }
 
-        public int GetDEF() {
-            return 1;
+        public override IEnumerable<IItem> GetItemLoot() {
+            throw new NotImplementedException();
         }
 
-        public int GetMaxHP() {
-            return 5;
+        public override int GetMaxHP() {
+            throw new NotImplementedException();
         }
 
-        public string GetName() {
-            return "Bubugg";
+        public override string GetName() {
+            throw new NotImplementedException();
         }
 
-        public GameObject GetPrefab() {
-            return Resources.Load("Prefabs/Bubugg") as GameObject;
-        }
-
-        public void RecieveDamage(int damage) {
+        public override GameObject GetPrefab() {
             throw new NotImplementedException();
         }
     }

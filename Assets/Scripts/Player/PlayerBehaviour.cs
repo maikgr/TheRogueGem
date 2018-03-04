@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace RogueGem.Controllers {
-    public class PlayerController : MonoBehaviour {
+    public class PlayerBehaviour : MonoBehaviour {
 
         private MovementController movementControl;
         private int atk;
@@ -21,13 +21,13 @@ namespace RogueGem.Controllers {
 	    }
 	
 	    void Update () {
-		    if (Input.GetKeyDown(KeyCode.RightArrow)) {
+		    if (Input.GetKeyDown(KeyCode.D)) {
                 movementControl.MoveByTile(gameObject, 1, 0);
-            } else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+            } else if (Input.GetKeyDown(KeyCode.A)) {
                 movementControl.MoveByTile(gameObject, -1, 0);
-            } else if (Input.GetKeyDown(KeyCode.UpArrow)) {
+            } else if (Input.GetKeyDown(KeyCode.W)) {
                 movementControl.MoveByTile(gameObject, 0, 1);
-            } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+            } else if (Input.GetKeyDown(KeyCode.S)) {
                 movementControl.MoveByTile(gameObject, 0, -1);
             }
         }

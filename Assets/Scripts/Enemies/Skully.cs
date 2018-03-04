@@ -1,53 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RogueGem.Items;
 using UnityEngine;
 
 namespace RogueGem.Enemies {
-    public class Skully : IEnemy {
-        
-        private int currentHP;
-
-        public Skully() {
-            currentHP = GetMaxHP();
+    public class Skully : ICreature {
+        public override int GetATK() {
+            return 2;
         }
 
-        public string GetName() {
+        public override int GetCRIT() {
+            return 0;
+        }
+
+        public override int GetDEF() {
+            return 0;
+        }
+
+        public override IEnumerable<IItem> GetItemLoot() {
+            return null;
+        }
+
+        public override int GetMaxHP() {
+            return 5;
+        }
+
+        public override string GetName() {
             return "Skully";
         }
 
-        public GameObject GetPrefab() {
+        public override GameObject GetPrefab() {
             return Resources.Load("Prefabs/Skully") as GameObject;
         }
 
-        public int GetMaxHP() {
-            return 3;
-        }
-
-        public int GetCurentHP() {
-            return currentHP;
-        }
-
-        public int GetATK() {
-            return 1;
-        }
-
-        public int GetDEF() {
-            return 0;
-        }
-
-        public int GetCRIT() {
-            return 0;
-        }
-
-        public void RecieveDamage(int damage) {
-            int hpLeft = currentHP - damage;
-            if (hpLeft < 0 && currentHP > 1) {
-                currentHP = 1;
-            } else {
-                currentHP = 0;
-            }
+        public override Vector2 GetDestination() {
+            int xMovement = Random.Range(-1, 2);
+            int yMovement = xMovement.Equals(0) ? Random.Range(-1, 2) : 0;
+            return new Vector2(xMovement, yMovement);
         }
     }
 }
