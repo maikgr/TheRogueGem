@@ -10,8 +10,16 @@ using RogueGem.Utilities;
 namespace RogueGem.Enemies {
     public abstract class EnemyBehaviour : CreatureBehaviour{
 
-        private MovementController movementControl;
         protected EnemyState state;
+
+        void OnEnable() {
+            EventBehaviour.StartListening(GameEvent.MoveEnemy, Move);
+        }
+
+        void OnDisable() {
+            EventBehaviour.StopListening(GameEvent.MoveEnemy, Move);
+        }
+
         public override void ReceiveDamage(int damage) {
             currentHp = currentHp - (Mathf.Max(0, damage - GetDEF()));
             if (currentHp <= 1 && state.Equals(EnemyState.Normal)) {
@@ -23,19 +31,12 @@ namespace RogueGem.Enemies {
             }
         }
 
-        void Start() {
-            movementControl = new MovementController(this);                               
-        }
-        
-        void Update() {
-            if (!EventBehaviour.instance.isPlayerTurn) {
-                Move();
-            }
+        public override void OnAnimationEnds() {
+            
         }
 
         private void Move() {
-            Vector2 destination = GetDestination();
-            movementControl.MoveByTile(gameObject, (int)destination.x, (int)destination.y);
+            TryMoveBy(GetDestination());
         }
     }
 }

@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RogueGem.Enemies;
 using RogueGem.Items;
 using UnityEngine;
-using UnityEngine.Events;
 using RogueGem.Utilities;
 
 namespace RogueGem.Controllers {
     public class PlayerBehaviour : CreatureBehaviour {
 
-        private MovementController movementControl;
         private int atk;
         private int def;
         private int crit;
         private int maxHp;
 	    void Start () {
-            movementControl = new MovementController(this);
             atk = 5;
             def = 1;
             crit = 10;
@@ -23,13 +19,20 @@ namespace RogueGem.Controllers {
 	    }
 	
 	    void Update () {
-            if (EventBehaviour.instance.isPlayerTurn) {
-                if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
-                    int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
-                    int vertical = (int)(Input.GetAxisRaw("Vertical"));
-                    movementControl.MoveByTile(gameObject, horizontal, vertical);
+            if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
+                int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+                int vertical = (int)(Input.GetAxisRaw("Vertical"));
+                if (!TryMoveBy(horizontal, vertical)) {
+                    EnemyBehaviour enemy = null;
+                    if(TryInteract(horizontal, vertical, out enemy)) {
+                        Attack(horizontal, vertical);
+                    }
                 }
             }
+        }
+
+        public override void OnAnimationEnds() {
+            EventBehaviour.TriggerEvent(GameEvent.MoveEnemy);
         }
 
         public override string GetName() {
@@ -57,7 +60,7 @@ namespace RogueGem.Controllers {
         }
 
         public override Vector2 GetDestination() {
-            throw new NotImplementedException();
+            return Vector2.zero;
         }
 
         public override void ReceiveDamage(int damage) {
