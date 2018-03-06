@@ -9,7 +9,7 @@ namespace RogueGem.Controllers {
     public class AttackController {
 
         public static void Attack(CreatureBehaviour attacker, CreatureBehaviour defender) {
-
+            defender.ReceiveDamage(attacker.GetATK());
         }
     }
 }

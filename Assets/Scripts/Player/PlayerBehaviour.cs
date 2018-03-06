@@ -3,6 +3,7 @@ using RogueGem.Enemies;
 using RogueGem.Items;
 using UnityEngine;
 using RogueGem.Utilities;
+using System;
 
 namespace RogueGem.Controllers {
     public class PlayerBehaviour : CreatureBehaviour {
@@ -25,6 +26,7 @@ namespace RogueGem.Controllers {
                 if (!TryMoveBy(horizontal, vertical)) {
                     EnemyBehaviour enemy = null;
                     if(TryInteract(horizontal, vertical, out enemy)) {
+                        AttackController.Attack(this, enemy);
                         Attack(horizontal, vertical);
                     }
                 }
@@ -33,6 +35,10 @@ namespace RogueGem.Controllers {
 
         public override void OnAnimationEnds() {
             EventBehaviour.TriggerEvent(GameEvent.MoveEnemy);
+        }
+
+        public override void OnDead() {
+            Debug.Log("Player is dead");
         }
 
         public override string GetName() {

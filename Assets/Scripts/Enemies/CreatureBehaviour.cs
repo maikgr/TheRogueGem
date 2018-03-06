@@ -24,7 +24,8 @@ namespace RogueGem.Enemies {
         public abstract IEnumerable<IItem> GetItemLoot();
         public abstract Vector2 GetDestination();
         public abstract void ReceiveDamage(int damage);
-        public abstract void OnAnimationEnds();     
+        public abstract void OnAnimationEnds();
+        public abstract void OnDead();
 
         public int GetCurentHP() {
             return currentHp;

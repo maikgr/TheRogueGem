@@ -13,11 +13,11 @@ namespace RogueGem.Enemies {
         protected EnemyState state;
 
         void OnEnable() {
-            EventBehaviour.StartListening(GameEvent.MoveEnemy, Move);
+            //EventBehaviour.StartListening(GameEvent.MoveEnemy, Move);
         }
 
         void OnDisable() {
-            EventBehaviour.StopListening(GameEvent.MoveEnemy, Move);
+            //EventBehaviour.StopListening(GameEvent.MoveEnemy, Move);
         }
 
         public override void ReceiveDamage(int damage) {
@@ -28,6 +28,7 @@ namespace RogueGem.Enemies {
             } else if (state.Equals(EnemyState.Fainted)) {
                 currentHp = 0;
                 state = EnemyState.Dead;
+                OnDead();
             }
         }
 
@@ -35,8 +36,16 @@ namespace RogueGem.Enemies {
             
         }
 
+        public override void OnDead() {
+            Destroy(gameObject);
+        }
+
         private void Move() {
             TryMoveBy(GetDestination());
+        }
+
+        public EnemyState GetState() {
+            return state;
         }
     }
 }
