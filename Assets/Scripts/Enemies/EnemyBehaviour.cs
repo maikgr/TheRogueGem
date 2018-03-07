@@ -13,11 +13,11 @@ namespace RogueGem.Enemies {
         protected EnemyState state;
 
         void OnEnable() {
-            //EventBehaviour.StartListening(GameEvent.MoveEnemy, Move);
+            EventBehaviour.StartListening(GameEvent.MoveEnemy, Move);
         }
 
         void OnDisable() {
-            //EventBehaviour.StopListening(GameEvent.MoveEnemy, Move);
+            EventBehaviour.StopListening(GameEvent.MoveEnemy, Move);
         }
 
         public override void ReceiveDamage(int damage) {

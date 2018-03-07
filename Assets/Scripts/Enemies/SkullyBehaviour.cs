@@ -23,7 +23,7 @@ namespace RogueGem.Enemies {
             return def;
         }
 
-        public override IEnumerable<IItem> GetItemLoot() {
+        public override IEnumerable<Item> GetItemLoot() {
             return null;
         }
 

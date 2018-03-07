@@ -21,7 +21,7 @@ namespace RogueGem.Enemies {
         public abstract int GetATK();
         public abstract int GetDEF();
         public abstract int GetCRIT();
-        public abstract IEnumerable<IItem> GetItemLoot();
+        public abstract IEnumerable<Item> GetItemLoot();
         public abstract Vector2 GetDestination();
         public abstract void ReceiveDamage(int damage);
         public abstract void OnAnimationEnds();
@@ -35,15 +35,17 @@ namespace RogueGem.Enemies {
             return TryMoveBy(new Vector2(xPos, yPos));
         }
 
-        protected bool TryMoveBy(Vector2 destination) {
-            Vector2 destinationPos = (Vector2)transform.position + destination;
+        protected bool TryMoveBy(Vector2 vector) {
+            Vector2 destinationPos = (Vector2)transform.position + vector;
             RaycastHit2D hit = Physics2D.Raycast(destinationPos, Vector2.zero);
             if (hit.transform == null) {
                 animationCoroutine = StartCoroutine(MoveTo(destinationPos));
                 return true;
+            } else if (hit.transform.GetComponent<CreatureBehaviour>() == null) {
+                animationCoroutine = StartCoroutine(MoveTo(destinationPos));
+                return true;
             }
             return false;
-            
         }
 
         protected void Attack(int xPos, int yPos) {
@@ -76,8 +78,8 @@ namespace RogueGem.Enemies {
 
         protected IEnumerator AttackEnemyOn(Vector2 targetPos) {
             Vector2 initialPos = transform.position;
-            Vector2 destinationPos = targetPos;
-            animationCoroutine = StartCoroutine(AnimateMoving(destinationPos));
+            GetComponent<SpriteRenderer>().sortingLayerName = "Attacker";
+            animationCoroutine = StartCoroutine(AnimateMoving(targetPos));
             while (animationCoroutine != null) {
                 yield return null;
             }
@@ -85,11 +87,13 @@ namespace RogueGem.Enemies {
             while (animationCoroutine != null) {
                 yield return null;
             }
+            GetComponent<SpriteRenderer>().sortingLayerName = "Creatures";
             OnAnimationEnds();
         }
 
         private IEnumerator AnimateMoving(Vector2 destination) {
             if (animationCoroutine == null) {
+                transform.GetComponent<SpriteRenderer>().flipX = destination.x < transform.position.x;
                 float t = 0;
                 while (t < 1) {
                     t += Time.deltaTime / 0.2f;
