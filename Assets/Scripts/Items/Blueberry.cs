@@ -23,5 +23,9 @@ namespace RogueGem.Items {
             turnsInEffect = 1;
             return healAmount;
         }
+
+        public override void SetAmount(int amount) {
+            this.amount = amount;
+        }
     }
 }

@@ -53,7 +53,7 @@ namespace RogueGem.Player {
         }
 
         private bool IsItemOnGround(out Item item) {
-            int layerMask = LayerMask.GetMask("Item");
+            int layerMask = LayerMask.GetMask("Items");
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 1f, layerMask);
             item = null;
             if (hit.transform != null) {
@@ -64,7 +64,7 @@ namespace RogueGem.Player {
         }
 
         private void GetItemOnGround() {
-            int layerMask = LayerMask.GetMask("Item");
+            int layerMask = LayerMask.GetMask("Items");
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 1f, layerMask);
             if (hit.transform != null) {
                 Item item = hit.transform.GetComponent<Item>();

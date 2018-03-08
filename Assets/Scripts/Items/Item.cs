@@ -8,5 +8,6 @@ namespace RogueGem.Items {
     public abstract class Item : MonoBehaviour {
         public abstract string GetName();
         public abstract int GetAmount();
+        public abstract void SetAmount(int amount);
     }
 }
