@@ -46,8 +46,17 @@ public class RoomFactory : MonoBehaviour {
 			return exit.ToString () + entry.ToString ();
 		}
 	}
+		
+	public void addRoomTemplateToMap(string typeName, RoomTemplate roomTemplate) {
+		if (hasRoomName (typeName)) {
+			roomMap [typeName].addTemplate (roomTemplate);
+		} else {
+			roomMap [typeName] = new RoomType ();
+			roomMap [typeName].addTemplate (roomTemplate);
+		}
+	}
 
-	public void addToRoomMap(string key, RoomType roomType) {
-		roomMap [key] = roomType;
+	public bool hasRoomName(string typeName) {
+		return roomMap.ContainsKey (typeName);
 	}
 }

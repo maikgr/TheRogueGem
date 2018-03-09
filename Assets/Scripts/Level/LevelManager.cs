@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;  
 
 public class LevelManager : MonoBehaviour {
 	private Board board = new Board();
@@ -11,8 +12,6 @@ public class LevelManager : MonoBehaviour {
 	private delegate bool endCondition(int[] p);
 	private int right = 0, left = 1, up = 2, down = 3;
 
-	private int gcol, grow;
-
 	// Use this for initialization
 	void Start () {
 		tf = GetComponent<TileFactory>();
@@ -22,163 +21,53 @@ public class LevelManager : MonoBehaviour {
 		renderLevel ();
 	}
 
-	public Tile[,] sToTile(string [,] s) {
-		Tile[,] tiles = new Tile[8, 8];
-		for (int i=0; i<8; i++) {
-			for (int j=0; j<8; j++) {
-				tiles[7-i,j] = tf.makeTile(s[i,j]);
+	public void LoadTemplates() {
+		DirectoryInfo dir = new DirectoryInfo("Assets/RoomTemplates");
+		FileInfo[] info = dir.GetFiles("*.txt");
+		StreamReader reader;
+		RoomTemplate newTemplate;
+
+		string[,] rt; string fileName;
+		foreach (FileInfo f in info) {
+			rt = new string[8, 8];
+			fileName = f.Name;
+			Debug.Log (" " + fileName);
+			reader = f.OpenText();
+			string text = reader.ReadLine();
+
+			int k = 7, l = 0;
+			while (text != null) { 
+				foreach (char c in text) {
+					rt [k, l] = c.ToString ();
+					l++;
+				}
+				l = 0;
+				k--;
+				text = reader.ReadLine();
+			}
+
+			newTemplate = new RoomTemplate (rt);
+
+			string exits = fileName.Substring (0, fileName.IndexOf ("_")), roomName;
+			if (exits.Equals("0")) { // Non-essential room
+				roomName = "0";
+				rf.addRoomTemplateToMap (roomName, newTemplate);
+			}
+			else if (exits.Equals("4")) { // Start/end room
+				roomName = "4";
+				rf.addRoomTemplateToMap (roomName, newTemplate);
+			} 
+			else {
+				for (int i=0; i< exits.Length - 1; i++) {
+					for (int j=i+1; j< exits.Length; j++) {
+						roomName = exits [i].ToString () + exits [j].ToString ();
+						rf.addRoomTemplateToMap (roomName, newTemplate);
+					}
+				}
 			}
 		}
-		return tiles;
 	}
 
-	public void LoadTemplates() {
-		string f = "floor", w = "wall";
-
-		string[,] s0 = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f }	
-		};
-
-		RoomTemplate a0 = new RoomTemplate(sToTile(s0));
-
-		string[,] slr = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, w, w, w, w, w, w, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, w, w, w, w, w, w, f },
-			{ f, f, f, f, f, f, f, f }
-		};
-
-		RoomTemplate alr = new RoomTemplate(sToTile(slr)); 
-
-		string[,] sud = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, w, f },
-			{ f, w, f, f, f, f, w, f },
-			{ f, w, f, f, f, f, w, f },
-			{ f, w, f, f, f, f, w, f },
-			{ f, w, f, f, f, f, w, f },
-			{ f, w, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, f, f },		
-		};
-
-		RoomTemplate aud = new RoomTemplate(sToTile(sud)); 
-
-		string[,] sur = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },		
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, w, w, w, w, w, f },
-			{ f, f, f, f, f, f, f, f }		
-		};
-
-		RoomTemplate aur = new RoomTemplate(sToTile(sur)); 
-
-		string[,] sul = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, w, f },		
-			{ f, f, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, w, f },
-			{ f, w, w, w, w, w, w, f },
-			{ f, f, f, f, f, f, f, f }		
-		};
-
-		RoomTemplate aul = new RoomTemplate(sToTile(sul)); 
-
-		string[,] sdl = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, w, w, w, w, w, w, f },
-			{ f, f, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, w, f },		
-			{ f, f, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, w, f },
-			{ f, f, f, f, f, f, f, f }	
-		};
-
-		RoomTemplate adl = new RoomTemplate(sToTile(sdl)); 
-
-		string[,] sdr = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, w, w, w, w, w, w, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, w, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f }
-		};
-
-		RoomTemplate adr = new RoomTemplate(sToTile(sdr)); 
-
-		string[,] s4 = new string[8,8] {
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w }
-		};
-
-		RoomTemplate a4 = new RoomTemplate(sToTile(s4)); 
-
-		RoomType r0 = new RoomType (a0),
-
-		rlr = new RoomType (alr),
-
-		rud = new RoomType (aud),
-
-		rul = new RoomType (aul),
-
-		rur = new RoomType (aur),
-
-		rdr = new RoomType (adr),
-
-		rdl = new RoomType (adl),
-
-		r4 = new RoomType (a4);
-
-
-
-//		r0.addTemplate (a10);
-//		r0.addTemplate (a20);
-
-
-
-		RoomFactory rf = GetComponent<RoomFactory>();
-		rf.addToRoomMap ("0", r0);
-		rf.addToRoomMap ("4", r4);
-
-		rf.addToRoomMap ("01", rlr);
-
-		rf.addToRoomMap ("02", rur);
-
-		rf.addToRoomMap ("03", rdr);
-
-		rf.addToRoomMap ("12", rul); //!
-
-		rf.addToRoomMap ("13", rdl); //!
-
-		rf.addToRoomMap ("23", rud);
-	}
-	
 	public void LoadLevel() {
 
 		endCondition rmin = new endCondition (rowMin), rmax = new endCondition (rowMax),
@@ -242,8 +131,6 @@ public class LevelManager : MonoBehaviour {
 
 		Room endRoom = rf.getRoom (4, 4);
 		board.addRoom (coords [0], coords [1], endRoom);
-		grow = coords [1];
-		gcol = coords [0];
 	}
 
 	public void renderLevel() {
@@ -256,16 +143,16 @@ public class LevelManager : MonoBehaviour {
 		if (roomCache == null)
 			roomCache = rf.getRoom ();
 		
-		Tile tile;
+		string tile;
 		for (int i = 0; i < rows+2; i++) {
 			for (int j = 0; j < cols+2; j++) {
 				if (i == 0 || i == rows + 1 || j == 0 || j == cols + 1) {
-					tile = tf.makeTile ("floor");
+					tile = "W";
 				}
 				else {
 					tile = roomCache.getTile (j%8, i%8);
 				}
-				Instantiate (tile.getPrefab (), new Vector2 (j, i), Quaternion.identity);
+				Instantiate (tf.makeTile(tile).getPrefab (), new Vector2 (j, i), Quaternion.identity);
 
 				if (j == 0) {
 					roomX = 0;
@@ -290,6 +177,18 @@ public class LevelManager : MonoBehaviour {
 						roomCache = rf.getRoom ();
 				}
 			}
+		}
+	}
+
+	private int getDirection(char c) {
+		if (c == 'r') {
+			return 0;
+		} else if (c == 'l') {
+			return 1;
+		} else if (c == 'u') {
+			return 2;
+		} else {
+			return 3;
 		}
 	}
 

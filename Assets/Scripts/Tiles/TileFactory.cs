@@ -9,16 +9,22 @@ public class TileFactory : MonoBehaviour {
 	public Tile makeTile(string type) {
 		GameObject[] pref;
 		GameObject randPref;
-		if (type.Equals("floor")) {
-			pref = floorPrefabs;
-			randPref = getPref (pref);
-			return new FloorTile (randPref);
 
-		} else {
+		if (type.Equals("W")) {
 			pref = wallPrefabs;
-			randPref = getPref (pref);
-			return new WallTile(randPref);
+		} 
+		else if (type.Equals("O")) {
+			pref = Random.Range(0,2).Equals(1) ? wallPrefabs : floorPrefabs;
 		}
+		else if (type.Equals("E")) {
+			pref = floorPrefabs;
+		}
+		else {
+			pref = floorPrefabs;
+		}
+
+		randPref = getPref (pref);
+		return new Tile(randPref);
 	}
 
 	private GameObject getPref(GameObject[] pref) {

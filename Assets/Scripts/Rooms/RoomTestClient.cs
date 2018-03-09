@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;  
 
 public class RoomTestClient : MonoBehaviour {
 	string f = "floor", w = "wall";
 	TileFactory tf;
+	RoomFactory rf;
 
 	public Tile[,] sToTile(string [,] s) {
 		Tile[,] tiles = new Tile[8, 8];
@@ -16,168 +18,48 @@ public class RoomTestClient : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
+		rf = GetComponent<RoomFactory>();
 		tf = GetComponent<TileFactory>();
+		DirectoryInfo dir = new DirectoryInfo("Assets/RoomTemplates");
+		FileInfo[] info = dir.GetFiles("023_1.txt");
+		StreamReader reader;
+		RoomTemplate newTemplate;
 
-		string[,] s0 = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ w, w, w, w, w, w, w, w },
-			{ f, f, f, f, f, f, f, f },
-			{ w, w, w, w, w, w, w, w },			
-			{ f, f, f, f, f, f, f, f },
-			{ w, w, w, w, w, w, w, w },
-			{ f, f, f, f, f, f, f, f },
-			{ w, w, w, w, w, w, w, w }		
-		};
+		foreach (FileInfo f in info) {
+			string[,] rt = new string[8, 8];
+			string fileName = f.Name;
+			Debug.Log (" " + fileName);
+			reader = f.OpenText();
+			string text = reader.ReadLine();
 
-		RoomTemplate a0 = new RoomTemplate(sToTile(s0));
+			int k = 7, l = 0;
+			while (text != null) { 
+				foreach (char c in text) {
+					rt [k, l] = c.ToString ();
+					l++;
+				}
+				l = 0;
+				k--;
+				text = reader.ReadLine();
+			}
 
-		string[,] s10 = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ w, f, w, w, w, w, w, w },
-			{ f, f, f, f, f, f, f, w },
-			{ w, w, w, w, f, w, w, w },			
-			{ f, f, f, f, f, f, f, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, f, f, f, f, w },
-			{ w, w, w, w, w, w, w, w }		
-		};
+			newTemplate = new RoomTemplate (rt);
 
-		RoomTemplate a10 = new RoomTemplate(sToTile(s10)); 
-
-		string[,] s20 = new string[8,8] {
-			{ w, f, f, f, f, f, f, f },
-			{ w, w, w, w, w, w, f, w },
-			{ w, f, f, f, f, f, f, w },
-			{ w, w, w, w, f, w, w, w },			
-			{ w, f, f, f, f, f, f, w },
-			{ w, w, f, w, w, w, w, w },
-			{ f, f, f, f, f, f, f, w },
-			{ f, w, w, w, w, w, w, w }		
-		};
-
-		RoomTemplate a20 = new RoomTemplate(sToTile(s20)); 
-
-		string[,] s01 = new string[8,8] {
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },		
-			{ f, f, f, f, f, f, f, f },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w }		
-		};
-
-		RoomTemplate a01 = new RoomTemplate(sToTile(s01)); 
-
-		string[,] s02 = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },		
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ w, w, w, w, w, w, w, w }		
-		};
-
-		RoomTemplate a02 = new RoomTemplate(sToTile(s02)); 
-
-		string[,] s03 = new string[8,8] {
-			{ w, w, w, w, w, w, w, w },
-			{ w, w, w, w, w, w, w, w },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },		
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f }	
-		};
-
-		RoomTemplate a03 = new RoomTemplate(sToTile(s03)); 
-
-		string[,] s23 = new string[8,8] {
-			{ w, f, f, f, f, f, w, w },
-			{ w, f, f, f, f, f, w, w },
-			{ w, f, f, f, f, f, w, w },
-			{ w, f, f, f, f, f, w, w },
-			{ w, f, f, f, f, f, w, w },
-			{ w, f, f, f, f, f, w, w },
-			{ w, f, f, f, f, f, w, w },
-			{ w, w, f, f, f, f, w, w },	
-		};
-
-		RoomTemplate a23 = new RoomTemplate(sToTile(s23)); 
-
-		string[,] s5 = new string[8,8] {
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f },
-			{ f, f, f, f, f, f, f, f }
-		};
-
-		RoomTemplate a5 = new RoomTemplate(sToTile(s5)); 
-
-		string[,] s4 = new string[8,8] {
-			{ w, w, w, w, w, w, w, w },
-			{ w, f, f, f, f, f, f, w },
-			{ w, f, f, f, f, f, f, w },
-			{ w, f, f, f, f, f, f, w },
-			{ w, f, f, f, f, f, f, w },
-			{ w, f, f, f, f, f, f, w },
-			{ w, f, f, f, f, f, f, w },
-			{ w, w, w, w, w, w, w, w }
-		};
-
-		RoomTemplate a4 = new RoomTemplate(sToTile(s4)); 
-
-		RoomType r0 = new RoomType (a0),
-
-		r01 = new RoomType (a01),
-
-		r02 = new RoomType (a02),
-
-		r03 = new RoomType (a03),
-
-		r23 = new RoomType (a23),
-
-		r5 = new RoomType (a5),
-
-		r4 = new RoomType (a4);
+			string exits = fileName.Substring (0, fileName.IndexOf ("_")), roomName;
+			for (int i=0; i< exits.Length - 1; i++) {
+				for (int j=i+1; j< exits.Length; j++) {
+					roomName = exits [i].ToString () + exits [j].ToString ();
+					rf.addRoomTemplateToMap (roomName, newTemplate);
+				}
+			}
+		}
 
 
-		//		r0.addTemplate (a10);
-		//		r0.addTemplate (a20);
-
-
-
-		RoomFactory rf = GetComponent<RoomFactory>();
-		rf.addToRoomMap ("0", r0);
-
-		rf.addToRoomMap ("01", r01);
-
-		rf.addToRoomMap ("02", r02);
-
-		rf.addToRoomMap ("03", r03);
-
-		rf.addToRoomMap ("12", r23); //!
-
-		rf.addToRoomMap ("13", r23); //!
-
-		rf.addToRoomMap ("23", r23);
-
-		rf.addToRoomMap ("5", r5);
-		rf.addToRoomMap ("4", r4);
-
-		Room room1 = rf.getRoom (0, 0);
+		Room room1 = rf.getRoom (0,2);
 		for (int i=0; i<8; i++) {
 			for (int j=0; j<8; j++) {
-				Tile tile = room1.getTile (i, j);
-				Instantiate(tile.getPrefab(), new Vector2 (i, j), Quaternion.identity);
+				string tile = room1.getTile (i, j);
+				Instantiate(tf.makeTile(tile).getPrefab(), new Vector2 (i, j), Quaternion.identity);
 			}
 		}
 	}

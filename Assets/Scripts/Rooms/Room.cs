@@ -10,7 +10,7 @@ public class Room {
 		this.name = key;
 	}
 
-	public Tile getTile (int x, int y) {
+	public string getTile (int x, int y) {
 		return layout.getTile (x, y);
 	}
 

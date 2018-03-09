@@ -5,8 +5,7 @@ using System.Collections.Generic;
 public class RoomType {
 	List<RoomTemplate> templates = new List<RoomTemplate> ();
 
-	public RoomType (RoomTemplate template) {
-		templates.Add(template);
+	public RoomType () {
 	}
 
 	public void addTemplate(RoomTemplate template) {

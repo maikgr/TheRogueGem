@@ -5,13 +5,13 @@ public class RoomTemplate {
 	const int roomX = 8;
 	const int roomY = 8;
 
-	private Tile[,] tiles;
+	private string[,] tiles;
 
-	public RoomTemplate(Tile[,] tiles) {
+	public RoomTemplate(string[,] tiles) {
 		this.tiles = tiles;
 	}
 
-	public Tile getTile(int x, int y) {
+	public string getTile(int x, int y) {
 		return tiles [y, x];
 	}
 }
