@@ -13,14 +13,15 @@ namespace RogueGem.Player {
         public int maxHp;
 
         private InventoryBehaviour inventory;
-
+        private UIBehaviour uiBehaviour;
 	    void Start () {
             atk = 5;
             def = 1;
             crit = 10;
             maxHp = 10;
             inventory = GetComponent<InventoryBehaviour>();
-	    }
+            uiBehaviour = FindObjectOfType(typeof(UIBehaviour)) as UIBehaviour;
+        }
 	
 	    void Update () {
             if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
@@ -40,10 +41,10 @@ namespace RogueGem.Player {
 
         public override void OnAnimationEnds() {
             Item item;
-            if(IsItemOnGround(out item)) {                
-                inventory.PutInGroundSlot(item);
+            if(IsItemOnGround(out item)) {
+                uiBehaviour.UpdateGroundSlot(item);
             } else {
-                inventory.RemoveFromGroundSlot();
+                uiBehaviour.RemoveItemOnGround();
             }
             EventBehaviour.TriggerEvent(GameEvent.MoveEnemy);
         }

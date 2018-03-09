@@ -7,7 +7,6 @@ using UnityEngine.Events;
 namespace RogueGem.Utilities {
     class EventBehaviour : MonoBehaviour {
         private Dictionary<GameEvent, UnityEvent> eventMap;
-        public bool isPlayerTurn;
 
         private static EventBehaviour eventController;
 
@@ -27,7 +26,6 @@ namespace RogueGem.Utilities {
             if(eventMap == null) {
                 eventMap = new Dictionary<GameEvent, UnityEvent>();
             }
-            isPlayerTurn = true;
         }
 
         public static void StartListening(GameEvent eventType, UnityAction listener) {
