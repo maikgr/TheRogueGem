@@ -5,9 +5,6 @@
 /[Bb]uilds/
 /Assets/AssetStoreTools*
 
-#Visual Assets are in GDrive
-/[Aa]ssets/Resources
-
 # Visual Studio 2015 cache directory
 /.vs/
 
