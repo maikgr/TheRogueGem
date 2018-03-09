@@ -13,15 +13,15 @@ namespace RogueGem.Player {
         public GameObject[] inventorySlot;
         public Texture emptyImage;
 
-        private Item[] inventory;
+		private InventoryItem[] inventory;
         private RawImage[] inventorySlotImage;
         private Text[] inventorySlotText;
         private RawImage groundSlotImage;
         private Text groundSlotText;
         private int itemCount;
 
-        void Start() {       
-            inventory = new Item[inventorySlot.Length];
+        void Start() {
+			inventory = new InventoryItem[inventorySlot.Length];
             inventorySlotImage = new RawImage[inventorySlot.Length];
             inventorySlotText = new Text[inventorySlot.Length];
             for(int i = 0; i < inventorySlot.Length; ++i) {
@@ -36,20 +36,24 @@ namespace RogueGem.Player {
         }
 
         public void PutInInventory(Item item) {
-            Item itemInInventory = Array.Find(inventory, i => i != null && i.name == item.name);
-            if (itemInInventory == default(Item) && itemCount < inventory.Length) {
-                Debug.Log("Adding new item");
-                AddNewItemToInventory(item);
-            } else if (itemInInventory != default(Item)) {
-                Debug.Log("Updating amount");
-                AddItemAmountInInventory(item);
-            }            
+			if (itemCount.Equals(0)) {
+				AddNewItemToInventory (item);
+			} else {
+				InventoryItem itemInInventory = Array.Find(inventory, i => i.GetName() == item.name);
+				if (itemInInventory == null && itemCount < inventory.Length){
+					Debug.Log ("Add new item " + item.name);
+					AddNewItemToInventory(item);
+				} else if (itemInInventory != null){
+					Debug.Log ("Update amount of " + itemInInventory.GetName());
+					AddItemAmountInInventory(item);
+				}
+			}
         }
 
         private void AddNewItemToInventory(Item item) {
             for (int i = 0; i < inventory.Length; ++i) {
                 if (inventory[i] == null) {
-                    inventory[i] = item;
+					inventory[i] = item.ToInventoryItem();
                     inventorySlotImage[i].enabled = true;
                     inventorySlotImage[i].texture = item.gameObject.GetComponent<SpriteRenderer>().sprite.texture;
                     inventorySlotText[i].text = item.GetAmount().ToString();
@@ -64,12 +68,9 @@ namespace RogueGem.Player {
 
         private void AddItemAmountInInventory(Item item) {
             for (int i = 0; i < inventory.Length; ++i) {
-                if (inventory[i] == item) {
-                    Debug.Log(inventory[i].GetAmount() + " - " +item.GetAmount());
-                    int newAmount = inventory[i].GetAmount() + item.GetAmount();
-                    inventory[i].SetAmount(newAmount);
-                    inventorySlotText[i].text = newAmount.ToString();
-
+				if (inventory[i].GetName() == item.name) {
+					inventory [i].AddAmount (item.GetAmount ());
+					inventorySlotText [i].text = inventory [i].GetAmount().ToString();
                     RemoveFromGroundSlot();
                     Destroy(item.gameObject);
                     break;
@@ -90,31 +91,6 @@ namespace RogueGem.Player {
             if (groundContent.texture != null) {
                 groundContent.texture = emptyImage;
                 groundAmount.text = string.Empty;
-            }
-        }
-
-        class InventoryItem {
-            public RawImage image;
-            public Text text;
-            public Item item;
-
-            private Texture emptyImage;
-            public InventoryItem(RawImage image, Text text, Texture emptyImage) {
-                this.image = image;
-                this.text = text;
-                this.emptyImage = emptyImage;
-            }
-
-            public void Add(Item item) {
-                image.texture = item.gameObject.GetComponent<SpriteRenderer>().sprite.texture;
-                text.text = item.GetAmount().ToString(); ;
-                this.item = item;
-            }
-
-            public void Remove() {
-                item = null;
-                text.text = string.Empty;
-                image.texture = emptyImage;
             }
         }
     }

@@ -9,5 +9,9 @@ namespace RogueGem.Items {
         public abstract string GetName();
         public abstract int GetAmount();
         public abstract void SetAmount(int amount);
+
+		public virtual InventoryItem ToInventoryItem(){
+			return new InventoryItem (this);
+		}
     }
 }

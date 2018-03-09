@@ -103,5 +103,9 @@ namespace RogueGem.Player {
         public override void ReceiveDamage(int damage) {
             currentHp = currentHp - (Mathf.Max(0, damage - GetDEF()));
         }
+
+		public void Heal(int amount){
+			currentHp = currentHp + amount;
+		}
     }
 }
