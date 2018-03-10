@@ -44,6 +44,21 @@ namespace RogueGem.Player {
             }
         }
 
+        public InventoryItem GetItem(int index, PlayerBehaviour player) {
+            InventoryItem itemInInventory = inventory[index];
+            if (itemInInventory == null) {
+                return null;
+            }
+            itemInInventory.Use(player);
+            if (itemInInventory.GetAmount().Equals(0)) {
+                uiBehaviour.EmptyInventory(index);
+                inventory[index] = null;
+            } else {
+                uiBehaviour.UpdateInventory(index, itemInInventory);
+            }
+            return itemInInventory;
+        }
+
         private void AddItemAmountInInventory(int index, Item item) {
             inventory[index].AddAmount(item.GetAmount());
             uiBehaviour.UpdateInventory(index, inventory[index]);

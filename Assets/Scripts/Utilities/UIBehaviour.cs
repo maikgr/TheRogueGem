@@ -1,10 +1,12 @@
 ﻿using RogueGem.Items;
+using RogueGem.Player;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace RogueGem.Utilities {
     public class UIBehaviour : MonoBehaviour{
 
+        public Text health;
         public GameObject groundSlot;
         public GameObject[] inventorySlot;
         public Texture emptyImage;
@@ -37,19 +39,19 @@ namespace RogueGem.Utilities {
         }
 
         public void UpdateGroundSlot(Item item) {
-            RawImage groundContent = groundSlot.transform.Find("Content").GetComponent<RawImage>();
-            Text groundAmount = groundSlot.transform.Find("Quantity").GetComponent<Text>();
-            groundContent.texture = item.gameObject.GetComponent<SpriteRenderer>().sprite.texture;
-            groundAmount.text = item.GetAmount().ToString();
+            groundSlotImage.texture = item.gameObject.GetComponent<SpriteRenderer>().sprite.texture;
+            groundSlotText.text = "x" + item.GetAmount().ToString();
         }
 
         public void RemoveItemOnGround() {
-            RawImage groundContent = groundSlot.transform.Find("Content").GetComponent<RawImage>();
-            Text groundAmount = groundSlot.transform.Find("Quantity").GetComponent<Text>();
-            if (groundContent.texture != emptyImage) {
-                groundContent.texture = emptyImage;
-                groundAmount.text = string.Empty;
+            if (groundSlotImage.texture != emptyImage) {
+                groundSlotImage.texture = emptyImage;
+                groundSlotText.text = string.Empty;
             }
+        }
+
+        public void UpdateHealth(PlayerBehaviour player) {
+            health.text = player.GetCurentHP() + "/" + player.GetMaxHP();
         }
     }
 }

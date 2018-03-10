@@ -15,12 +15,9 @@ namespace RogueGem.Player {
         private InventoryBehaviour inventory;
         private UIBehaviour uiBehaviour;
 	    void Start () {
-            atk = 5;
-            def = 1;
-            crit = 10;
-            maxHp = 10;
             inventory = GetComponent<InventoryBehaviour>();
             uiBehaviour = FindObjectOfType(typeof(UIBehaviour)) as UIBehaviour;
+            uiBehaviour.UpdateHealth(this);
         }
 	
 	    void Update () {
@@ -36,6 +33,12 @@ namespace RogueGem.Player {
                 }
             } else if (Input.GetKeyDown(KeyCode.E)) {
                 GetItemOnGround();
+            } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                UseItem(1);
+            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                UseItem(2);
+            } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                UseItem(3);
             }
         }        
 
@@ -48,11 +51,6 @@ namespace RogueGem.Player {
             }
             EventBehaviour.TriggerEvent(GameEvent.MoveEnemy);
         }
-
-        public override void OnDead() {
-            Debug.Log("Player is dead");
-        }
-
         private bool IsItemOnGround(out Item item) {
             int layerMask = LayerMask.GetMask("Items");
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 1f, layerMask);
@@ -65,12 +63,14 @@ namespace RogueGem.Player {
         }
 
         private void GetItemOnGround() {
-            int layerMask = LayerMask.GetMask("Items");
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 1f, layerMask);
-            if (hit.transform != null) {
-                Item item = hit.transform.GetComponent<Item>();
+            Item item = null;
+            if (IsItemOnGround(out item)) {
                 inventory.PutInInventory(item);
             }
+        }
+
+        private void UseItem(int index) {
+            InventoryItem item = inventory.GetItem(index - 1, this);
         }
 
         public override string GetName() {
@@ -101,12 +101,18 @@ namespace RogueGem.Player {
             return Vector2.zero;
         }
 
+        public override void OnDead() {
+            Debug.Log("Player is dead");
+        }
+
         public override void ReceiveDamage(int damage) {
-            currentHp = currentHp - (Mathf.Max(0, damage - GetDEF()));
+            currentHp = currentHp - (Mathf.Max(0, damage - def));
+            uiBehaviour.UpdateHealth(this);
         }
 
 		public void Heal(int amount){
-			currentHp = currentHp + amount;
-		}
+			currentHp = Mathf.Clamp(currentHp + amount, 0, maxHp);
+            uiBehaviour.UpdateHealth(this);
+        }
     }
 }

@@ -6,7 +6,30 @@ using System.Text;
 using UnityEngine;
 
 namespace RogueGem.Items {
-    public abstract class HealingItem : Item {
-        public abstract int GetHealingAmount(out int turnsInEffect);
+    public class HealingItem : Item {
+
+        public string itemName;
+        public int itemAmount;
+        public int healingAmount;
+
+        public override int GetAmount() {
+            return itemAmount;
+        }
+
+        public override ItemType GetItemType() {
+            return ItemType.Healing;
+        }
+
+        public override string GetName() {
+            return itemName;
+        }
+
+        public int GetHealAmount() {
+            return healingAmount;
+        }
+
+        public override InventoryItem ToInventoryItem() {
+            return new HealingInventoryItem(this);
+        }
     }
 }

@@ -31,7 +31,6 @@ public class LevelManager : MonoBehaviour {
 		foreach (FileInfo f in info) {
 			rt = new string[8, 8];
 			fileName = f.Name;
-			Debug.Log (" " + fileName);
 			reader = f.OpenText();
 			string text = reader.ReadLine();
 

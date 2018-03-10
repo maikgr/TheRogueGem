@@ -4,10 +4,13 @@ namespace RogueGem.Items {
     public abstract class Item : MonoBehaviour {
         public abstract string GetName();
         public abstract int GetAmount();
-        public abstract void SetAmount(int amount);
+        public abstract ItemType GetItemType();
+        public abstract InventoryItem ToInventoryItem();
+    }
 
-		public virtual InventoryItem ToInventoryItem(){
-			return new InventoryItem (this);
-		}
+    public enum ItemType {
+        Healing,
+        Throwing,
+        Rune
     }
 }
