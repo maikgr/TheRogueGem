@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace RogueGem.Items {
-    class RuneItem : Item {
+    class GlobalRuneItem : Item {
         public string itemName;
         public int itemAmount;
         public int itemDamage;
@@ -22,7 +22,7 @@ namespace RogueGem.Items {
         }
 
         public override InventoryItem ToInventoryItem() {
-            return new RuneInventoryItem(this);
+            return new GlobalRuneInventoryItem(this);
         }
 
         public int GetDamage() {

@@ -1,7 +1,9 @@
 ﻿using RogueGem.Items;
 using RogueGem.Player;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 namespace RogueGem.Utilities {
     public class UIBehaviour : MonoBehaviour{
@@ -10,11 +12,13 @@ namespace RogueGem.Utilities {
         public GameObject groundSlot;
         public GameObject[] inventorySlot;
         public Texture emptyImage;
+        public GameObject attackGrid;
 
         private RawImage[] inventorySlotImage;
         private Text[] inventorySlotText;
         private RawImage groundSlotImage;
         private Text groundSlotText;
+        private GameObject parentFx;
 
         void Start() {
             inventorySlotImage = new RawImage[inventorySlot.Length];
@@ -53,5 +57,26 @@ namespace RogueGem.Utilities {
         public void UpdateHealth(PlayerBehaviour player) {
             health.text = player.GetCurentHP() + "/" + player.GetMaxHP();
         }
+
+        public void LinearAttack(Vector2 from, Vector2 direction, int distance) {
+            if(parentFx != null) {
+                Destroy(parentFx);
+                parentFx = null;
+            }
+            parentFx = new GameObject("LinearAttack");
+            parentFx.transform.position = from;
+            Vector2 attackGridPos = from;
+            for(int i = 0; i < distance; ++i) {
+                attackGridPos += direction;
+                GameObject attackGrid = Instantiate(this.attackGrid, attackGridPos, Quaternion.identity, parentFx.transform);                
+            }
+
+        }
+
+        public void CancelAttack() {
+            Destroy(parentFx);
+            parentFx = null;
+        }
     }
 }
+ 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace RogueGem.Controllers {
+namespace RogueGem.Skills {
     public class AttackController {
 
         public static void Attack(CreatureBehaviour attacker, CreatureBehaviour defender) {

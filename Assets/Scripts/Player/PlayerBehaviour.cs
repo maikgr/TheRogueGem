@@ -3,7 +3,7 @@ using RogueGem.Enemies;
 using RogueGem.Items;
 using UnityEngine;
 using RogueGem.Utilities;
-using RogueGem.Controllers;
+using RogueGem.Skills;
 
 namespace RogueGem.Player {
     public class PlayerBehaviour : CreatureBehaviour {
@@ -14,31 +14,62 @@ namespace RogueGem.Player {
 
         private InventoryBehaviour inventory;
         private UIBehaviour uiBehaviour;
+        private bool canMove;
+        private int targetedAttackDistance;
+        private Skill activeSkill;
+        private Vector2 targetDirection;
+        private ThrowingInventoryItem activeThrowingItem;
+        private int activeItemIndex;
+
 	    void Start () {
             inventory = GetComponent<InventoryBehaviour>();
             uiBehaviour = FindObjectOfType(typeof(UIBehaviour)) as UIBehaviour;
             uiBehaviour.UpdateHealth(this);
+            canMove = true;
         }
 	
 	    void Update () {
-            if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
-                int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
-                int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
-                if (!TryMoveBy(horizontal, vertical)) {
-                    EnemyBehaviour enemy;
-                    if(TryInteract(horizontal, vertical, out enemy)) {
-                        AttackController.Attack(this, enemy);
-                        Attack(horizontal, vertical);
+            if (canMove) {
+                if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
+                    int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+                    int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
+                    if (!TryMoveBy(horizontal, vertical)) {
+                        EnemyBehaviour enemy;
+                        if (TryInteract(horizontal, vertical, out enemy)) {
+                            AttackController.Attack(this, enemy);
+                            Attack(horizontal, vertical);
+                        }
                     }
+                } else if (Input.GetKeyDown(KeyCode.E)) {
+                    GetItemOnGround();
+                } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                    UseItem(1);
+                } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                    UseItem(2);
+                } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                    UseItem(3);
+                } else if (Input.GetKeyDown(KeyCode.Z)) {
+                    canMove = false;
                 }
-            } else if (Input.GetKeyDown(KeyCode.E)) {
-                GetItemOnGround();
-            } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                UseItem(1);
-            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                UseItem(2);
-            } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                UseItem(3);
+            } else {
+                if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
+                    int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+                    int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
+                    targetDirection = new Vector2(horizontal, vertical);
+                    uiBehaviour.LinearAttack(transform.position, targetDirection, targetedAttackDistance);
+                } else if (Input.GetKeyDown(KeyCode.X)) {
+                    uiBehaviour.CancelAttack();
+                    canMove = true;
+                } else if (Input.GetKeyDown(KeyCode.Z)) {
+                    if (activeThrowingItem != null) {
+                        activeThrowingItem.Use(this);
+                        inventory.UpdateAmount(activeItemIndex, activeThrowingItem.GetAmount());
+                        activeThrowingItem = null;
+                    }
+                    activeSkill.Use(this, targetDirection);
+                    uiBehaviour.CancelAttack();                    
+                    canMove = true;
+                }
             }
         }        
 
@@ -70,7 +101,34 @@ namespace RogueGem.Player {
         }
 
         private void UseItem(int index) {
-            InventoryItem item = inventory.GetItem(index - 1, this);
+            InventoryItem item;
+            index = index - 1;
+            if(inventory.TryUseItem(index, out item)) {
+                switch (item.GetItemType()) {
+                    case ItemType.Throwing:
+                        ThrowingInventoryItem throwingItem = item as ThrowingInventoryItem;                        
+                        PrepareSkill(throwingItem.GetSkill());
+                        activeSkill = throwingItem.GetSkill();
+                        activeThrowingItem = throwingItem;
+                        activeItemIndex = index;
+                        break;
+                    default:
+                        item.Use(this);
+                        break;
+                }
+                inventory.UpdateAmount(index, item.GetAmount());
+            }
+        }
+
+        private void PrepareSkill(Skill skill) {
+            canMove = false;
+            switch (skill.GetSkillArea()) {
+                case SkillArea.Linear:
+                    ThrowingSkill throwingSKill = skill as ThrowingSkill;
+                    targetedAttackDistance = throwingSKill.GetDistance();
+                    uiBehaviour.LinearAttack(transform.position, new Vector2(1, 0), targetedAttackDistance);
+                    break;
+            }            
         }
 
         public override string GetName() {
@@ -82,7 +140,8 @@ namespace RogueGem.Player {
         }
 
         public override int GetATK() {
-            return atk;
+            int damage = Random.Range(0, 100) < crit ? Mathf.FloorToInt(atk * 1.5f) : atk;
+            return damage;
         }
 
         public override int GetDEF() {

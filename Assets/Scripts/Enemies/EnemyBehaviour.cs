@@ -1,10 +1,4 @@
-﻿using RogueGem.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using RogueGem.Items;
+﻿using UnityEngine;
 using RogueGem.Utilities;
 
 namespace RogueGem.Enemies {

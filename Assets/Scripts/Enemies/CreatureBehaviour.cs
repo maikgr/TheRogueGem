@@ -1,11 +1,7 @@
-﻿using RogueGem.Controllers;
-using RogueGem.Items;
+﻿using RogueGem.Items;
 using RogueGem.Player;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace RogueGem.Enemies {
@@ -44,8 +40,7 @@ namespace RogueGem.Enemies {
                 return true;
             } else if (hit.transform.GetComponent<CreatureBehaviour>() == null
                         && hit.transform.GetComponent<PlayerBehaviour>() == null
-                        && !hit.transform.tag.Equals("Obstacle")) {
-                Debug.Log(hit.transform.tag);
+                        && !hit.transform.tag.Equals("Obstacle")) {                
                 animationCoroutine = StartCoroutine(MoveTo(destinationPos));
                 return true;
             }
