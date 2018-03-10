@@ -3,7 +3,6 @@ using System.Collections;
 using System.IO;  
 
 public class RoomTestClient : MonoBehaviour {
-	string f = "floor", w = "wall";
 	TileFactory tf;
 	RoomFactory rf;
 
