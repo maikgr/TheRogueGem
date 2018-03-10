@@ -8,14 +8,10 @@ using RogueGem.Utilities;
 using RogueGem.Enemies;
 
 namespace RogueGem.Skills {
-    public class AbsorbSkill : Skill {
+    public class AbsorbSkill : SingleSkill {
 
         public AbsorbSkill(string name, int damage)
-            : base(name, damage) { }
-
-        public override SkillArea GetSkillArea() {
-            return SkillArea.Single;
-        }
+            : base(name, damage) { }        
 
         public override void Use(PlayerBehaviour player, Vector2 direction) {
             Vector2 targetPos = (Vector2)player.transform.position + direction;

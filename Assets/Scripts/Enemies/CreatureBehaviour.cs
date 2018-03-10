@@ -109,6 +109,7 @@ namespace RogueGem.Enemies {
     public enum EnemyState {
         Normal,
         Fainted,
-        Dead
+        Dead,
+        Rooted
     }
 }

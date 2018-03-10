@@ -11,7 +11,7 @@ namespace RogueGem.Utilities {
             while (!WorldController.IsTileEmpty(pos)) {
                 pos = new Vector2(Random.Range(1, 33), Random.Range(1, 33));
             }
-            GameObject enemy = EnemyFactory.GetEnemy();
+            GameObject enemy = EnemyFactory.GetRandomEnemy();
             Instantiate(enemy, pos, Quaternion.identity);
         }
 

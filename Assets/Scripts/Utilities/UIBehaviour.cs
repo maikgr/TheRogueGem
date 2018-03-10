@@ -9,6 +9,7 @@ namespace RogueGem.Utilities {
     public class UIBehaviour : MonoBehaviour{
 
         public Text health;
+        public Text skill;
         public GameObject groundSlot;
         public GameObject[] inventorySlot;
         public Texture emptyImage;
@@ -30,6 +31,10 @@ namespace RogueGem.Utilities {
 
             groundSlotImage = groundSlot.transform.Find("Content").GetComponent<RawImage>();
             groundSlotText = groundSlot.transform.Find("Quantity").GetComponent<Text>();
+        }
+
+        public void SetSkill(string skillName) {
+            skill.text = skillName;
         }
 
         public void UpdateInventory(int index, InventoryItem item) {
