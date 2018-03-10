@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace RogueGem.Items {
-    class GlobalRuneItem : Item {
+    public class GlobalRuneItem : Item {
         public string itemName;
         public int itemAmount;
         public int itemDamage;

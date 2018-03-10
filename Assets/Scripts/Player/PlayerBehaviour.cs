@@ -16,6 +16,7 @@ namespace RogueGem.Player {
         private UIBehaviour uiBehaviour;
         private bool canMove;
         private int targetedAttackDistance;
+        private Skill currentSkill;
         private Skill activeSkill;
         private Vector2 targetDirection;
         private ThrowingInventoryItem activeThrowingItem;
@@ -26,6 +27,7 @@ namespace RogueGem.Player {
             uiBehaviour = FindObjectOfType(typeof(UIBehaviour)) as UIBehaviour;
             uiBehaviour.UpdateHealth(this);
             canMove = true;
+            currentSkill = new AbsorbSkill("Absorb", 1);
         }
 	
 	    void Update () {
@@ -50,13 +52,22 @@ namespace RogueGem.Player {
                     UseItem(3);
                 } else if (Input.GetKeyDown(KeyCode.Z)) {
                     canMove = false;
+                    activeSkill = currentSkill;
+                    PrepareSkill(currentSkill);
                 }
             } else {
                 if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
                     int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
                     int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
                     targetDirection = new Vector2(horizontal, vertical);
-                    uiBehaviour.LinearAttack(transform.position, targetDirection, targetedAttackDistance);
+                    switch (activeSkill.GetSkillArea()) {
+                        case SkillArea.Linear:
+                            uiBehaviour.LinearAttack(transform.position, targetDirection, targetedAttackDistance);
+                            break;
+                        case SkillArea.Single:
+                            uiBehaviour.SingleAttack(transform.position, targetDirection);
+                            break;
+                    }                    
                 } else if (Input.GetKeyDown(KeyCode.X)) {
                     uiBehaviour.CancelAttack();
                     canMove = true;
@@ -122,13 +133,17 @@ namespace RogueGem.Player {
 
         private void PrepareSkill(Skill skill) {
             canMove = false;
+            Vector2 defaultDirection = new Vector2(1, 0);
             switch (skill.GetSkillArea()) {
                 case SkillArea.Linear:
                     ThrowingSkill throwingSKill = skill as ThrowingSkill;
                     targetedAttackDistance = throwingSKill.GetDistance();
-                    uiBehaviour.LinearAttack(transform.position, new Vector2(1, 0), targetedAttackDistance);
+                    uiBehaviour.LinearAttack(transform.position, defaultDirection, targetedAttackDistance);
                     break;
-            }            
+                case SkillArea.Single:
+                    uiBehaviour.SingleAttack(transform.position, defaultDirection);
+                    break;
+            }
         }
 
         public override string GetName() {
@@ -165,13 +180,19 @@ namespace RogueGem.Player {
         }
 
         public override void ReceiveDamage(int damage) {
-            currentHp = currentHp - (Mathf.Max(0, damage - def));
+            damage = Mathf.Max(0, damage - def);
+            currentHp = currentHp - damage;
+            Debug.Log("You received " + damage + " damage.");
             uiBehaviour.UpdateHealth(this);
         }
 
 		public void Heal(int amount){
 			currentHp = Mathf.Clamp(currentHp + amount, 0, maxHp);
             uiBehaviour.UpdateHealth(this);
+        }
+
+        public void SetSkill(Skill skill) {
+            currentSkill = skill;
         }
     }
 }

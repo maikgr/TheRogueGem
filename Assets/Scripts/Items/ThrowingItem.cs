@@ -1,8 +1,4 @@
 ﻿using RogueGem.Skills;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RogueGem.Items {
     public class ThrowingItem : Item {

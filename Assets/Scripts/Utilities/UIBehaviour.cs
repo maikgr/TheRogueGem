@@ -12,7 +12,7 @@ namespace RogueGem.Utilities {
         public GameObject groundSlot;
         public GameObject[] inventorySlot;
         public Texture emptyImage;
-        public GameObject attackGrid;
+        public GameObject attackGridPrefab;
 
         private RawImage[] inventorySlotImage;
         private Text[] inventorySlotText;
@@ -58,24 +58,35 @@ namespace RogueGem.Utilities {
             health.text = player.GetCurentHP() + "/" + player.GetMaxHP();
         }
 
-        public void LinearAttack(Vector2 from, Vector2 direction, int distance) {
+        public void LinearAttack(Vector2 attackerPos, Vector2 direction, int distance) {
             if(parentFx != null) {
-                Destroy(parentFx);
-                parentFx = null;
+                CancelAttack();
             }
-            parentFx = new GameObject("LinearAttack");
-            parentFx.transform.position = from;
-            Vector2 attackGridPos = from;
+            CreateParentObject(attackerPos);
+            Vector2 attackGridPos = attackerPos;
             for(int i = 0; i < distance; ++i) {
                 attackGridPos += direction;
-                GameObject attackGrid = Instantiate(this.attackGrid, attackGridPos, Quaternion.identity, parentFx.transform);                
+                Instantiate(attackGridPrefab, attackGridPos, Quaternion.identity, parentFx.transform);                
             }
+        }
 
+        public void SingleAttack(Vector2 attackerPos, Vector2 direction) {
+            if (parentFx != null) {
+                CancelAttack();
+            }
+            CreateParentObject(attackerPos);
+            Vector2 attackGridPos = attackerPos + direction;
+            Instantiate(attackGridPrefab, attackGridPos, Quaternion.identity, parentFx.transform);
         }
 
         public void CancelAttack() {
             Destroy(parentFx);
             parentFx = null;
+        }
+
+        private void CreateParentObject(Vector2 pos) {
+            parentFx = new GameObject("AttackArea");
+            parentFx.transform.position = pos;
         }
     }
 }

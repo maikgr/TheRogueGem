@@ -22,6 +22,7 @@ namespace RogueGem.Skills {
     }
 
     public enum SkillArea {
-        Linear
+        Linear,
+        Single
     }
 }

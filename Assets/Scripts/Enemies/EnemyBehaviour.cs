@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
 using RogueGem.Utilities;
+using RogueGem.Skills;
 
 namespace RogueGem.Enemies {
     public abstract class EnemyBehaviour : CreatureBehaviour{
 
         protected EnemyState state;
+        protected int turnPassed;
+        protected int turnFainted;
+
+        public abstract Skill GetSkill();
 
         void OnEnable() {
             EventBehaviour.StartListening(GameEvent.MoveEnemy, Move);
@@ -19,6 +24,8 @@ namespace RogueGem.Enemies {
             if (currentHp <= 1 && state.Equals(EnemyState.Normal)) {
                 currentHp = 1;
                 state = EnemyState.Fainted;
+                turnFainted = turnPassed;
+                OnFainted();
             } else if (state.Equals(EnemyState.Fainted)) {
                 currentHp = 0;
                 state = EnemyState.Dead;
@@ -34,8 +41,20 @@ namespace RogueGem.Enemies {
             Destroy(gameObject);
         }
 
+        public void OnFainted() {
+            GetComponent<SpriteRenderer>().color = Color.gray;            
+        }
+
         private void Move() {
-            TryMoveBy(GetDestination());
+            if (turnPassed - turnFainted >= 5 && state == EnemyState.Fainted) {
+                currentHp = 1;
+                state = EnemyState.Normal;
+                GetComponent<SpriteRenderer>().color = Color.white;
+            }
+            ++turnPassed;
+            if (state == EnemyState.Normal) {
+                TryMoveBy(GetDestination());
+            }
         }
 
         public EnemyState GetState() {
