@@ -18,7 +18,7 @@ namespace RogueGem.Items {
         }
 
         public override string GetName() {
-            return name;
+            return itemName;
         }
 
         public override InventoryItem ToInventoryItem() {
