@@ -1,5 +1,6 @@
 ﻿using RogueGem.Controllers;
 using RogueGem.Items;
+using RogueGem.Player;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,7 +42,10 @@ namespace RogueGem.Enemies {
             if (hit.transform == null) {
                 animationCoroutine = StartCoroutine(MoveTo(destinationPos));
                 return true;
-            } else if (hit.transform.GetComponent<CreatureBehaviour>() == null) {
+            } else if (hit.transform.GetComponent<CreatureBehaviour>() == null
+                        && hit.transform.GetComponent<PlayerBehaviour>() == null
+                        && !hit.transform.tag.Equals("Obstacle")) {
+                Debug.Log(hit.transform.tag);
                 animationCoroutine = StartCoroutine(MoveTo(destinationPos));
                 return true;
             }
@@ -94,12 +98,14 @@ namespace RogueGem.Enemies {
         private IEnumerator AnimateMoving(Vector2 destination) {
             if (animationCoroutine == null) {
                 transform.GetComponent<SpriteRenderer>().flipX = destination.x < transform.position.x;
+                GetComponent<SpriteRenderer>().sortingLayerName = "Attacker";
                 float t = 0;
                 while (t < 1) {
                     t += Time.deltaTime / 0.2f;
                     transform.position = Vector2.Lerp(transform.position, destination, t);
                     yield return null;
                 }
+                GetComponent<SpriteRenderer>().sortingLayerName = "Default";
                 animationCoroutine = null;
             }
         }
