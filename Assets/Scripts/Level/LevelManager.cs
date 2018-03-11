@@ -228,7 +228,7 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		GameObject player = GameObject.FindGameObjectWithTag ("Player");
-        player.SetActive(false);
+		player.SetActive (false);
 		player.transform.position = new Vector2 (specialCoords [0, 0], specialCoords [0, 1]);
 		player.SetActive (true);
 		GameObject exit = Instantiate (tf.exitPrefab, new Vector2 (specialCoords [1, 0], specialCoords [1, 1]), Quaternion.identity) as GameObject;
@@ -259,8 +259,9 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		GameObject player = GameObject.FindGameObjectWithTag ("Player");
+		player.SetActive (false);
 		player.transform.position = new Vector2 (15, 1);	
-
+		player.SetActive (true);
 		// instantiate Mayhoc
 				
 	}
@@ -268,7 +269,6 @@ public class LevelManager : MonoBehaviour {
 	public void newLevel() {
 		currentLevel++;
 		Destroy (GameObject.Find("Tiles"));
-
 
 		if (currentLevel == 10) {
 			board.clearBoss ();
