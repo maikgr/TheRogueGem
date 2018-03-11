@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RogueGem.Utilities;
+using System.Linq;
 
 public class MinimapBehavior : MonoBehaviour {
 
@@ -11,7 +12,7 @@ public class MinimapBehavior : MonoBehaviour {
 	}
 
 	public void revealTiles() {
-		GameObject[] walls = GameObject.FindGameObjectsWithTag ("Obstacle");
+		var walls = GameObject.FindGameObjectsWithTag ("Obstacle").Concat(GameObject.FindGameObjectsWithTag ("Exit"));
 		foreach (GameObject wall in walls) {
 			if (WorldController.IsTileInSight(wall.transform.position)) {
 				wall.transform.Find("Minimap").transform.GetComponent<SpriteRenderer> ().enabled = true;
