@@ -156,6 +156,7 @@ public class LevelManager : MonoBehaviour {
 				}
 				GameObject goTile = Instantiate (tf.makeTile(tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
 				board.addTile (j, i, goTile);
+                board.addNodes(tile != "W", new Vector2(j, i));
 				goTile.transform.SetParent (boardHolder);
 
 				if (j == 0) {

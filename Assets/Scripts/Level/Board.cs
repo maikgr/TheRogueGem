@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using RogueGem.Level;
+using System.Collections.Generic;
 
 public class Board : MonoBehaviour {
 	const int roomX = 4, roomY = 4;
 	GameObject[,] tiles = new GameObject[34, 34];
 	Room[,] rooms = new Room[roomX, roomY];
+    Node[,] nodes = new Node[34, 34];
 	private static Board _instance;
 	public static Board Instance { get { return _instance; } }
 
 	void Start () {
 		if (_instance != null && _instance != this)
 		{
-			Destroy(this.gameObject);
+			Destroy(gameObject);
 		} else {
 			_instance = this;
 		}
@@ -41,4 +44,12 @@ public class Board : MonoBehaviour {
 	public GameObject getTileChild(int x, int y) {
 		return tiles [x,y];
 	}
+
+    public void addNodes(bool isFloor, Vector2 position) {
+        nodes[(int)position.x, (int)position.y] = new Node(isFloor, position);
+    }
+
+    public Node getNode(Vector2 position) {
+        return nodes[(int)position.x, (int)position.y];
+    }
 }

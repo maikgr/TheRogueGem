@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using RogueGem.Level;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,6 +38,26 @@ namespace RogueGem.Utilities {
             }
 
             return tilesInSight;
+        }
+
+        public static void FindPath(Vector2 startPos, Vector2 targetPos) {
+            Board board = Board.Instance;
+            Node startNode = board.getNode(startPos);
+            Node endNode = board.getNode(targetPos);
+
+            List<Node> openSet = new List<Node>();
+            HashSet<Node> closedSet = new HashSet<Node>();
+
+            while (openSet.Count > 0) {
+                Node currentNode = openSet[0];
+                for(int i = 1; i < openSet.Count; ++i) {
+                    if (openSet[i].GetFCost() < currentNode.GetFCost()
+                        || openSet[i].GetFCost() == currentNode.GetFCost()
+                        && openSet[i].GetFCost() < currentNode.GetFCost()) {
+                        currentNode = openSet[i];
+                    }
+                }
+            }
         }
     }
 }
