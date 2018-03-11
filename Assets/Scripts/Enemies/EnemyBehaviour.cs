@@ -15,16 +15,17 @@ namespace RogueGem.Enemies {
         protected PlayerBehaviour player;
         protected TurnBehaviour turns;
         private Vector2 lastPosition;
-        private Board board;
         public abstract Skill GetSkill();
         public abstract int GetSightDistance();
+        public abstract void AttackPlayer();
+        public abstract bool IsInAttackRange();
 
         void Start() {
             player = FindObjectOfType(typeof(PlayerBehaviour)) as PlayerBehaviour;
             turns = FindObjectOfType(typeof(TurnBehaviour)) as TurnBehaviour;
             turns.RegisterEnemy(this);
             lastPosition = transform.position;
-            board = Board.Instance;
+            
         }        
 
         public override void ReceiveDamage(int damage) {
@@ -41,6 +42,7 @@ namespace RogueGem.Enemies {
         }
 
         public override void OnAnimationEnds() {
+            Board board = Board.Instance;
             Node oldNode = new Node(true, lastPosition);
             Node newNode = new Node(false, transform.position);
             board.updateBoardNode(oldNode);
@@ -59,12 +61,15 @@ namespace RogueGem.Enemies {
             SetImmobile(5);
         }
 
-        public void Move() {
-            ++turnPassed;
-            if (IsAbleToMove()) {
+        public void EnemyTurn() {            
+            if (IsInAttackRange()) {
+                AttackPlayer();
+                player.ReceiveDamage(GetATK());
+            }else if (IsAbleToMove()) {
                 lastPosition = transform.position;
                 TryMoveBy(GetDestination());
             }
+            ++turnPassed;
         }
 
         private bool IsAbleToMove() {

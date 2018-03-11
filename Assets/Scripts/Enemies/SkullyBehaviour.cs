@@ -17,6 +17,14 @@ namespace RogueGem.Enemies {
             return sightDistance;
         }
 
+        public override void AttackPlayer() {
+            Attack(GetDestination());
+        }
+
+        public override bool IsInAttackRange() {
+            return GetPathfinderFirstGrid() == (Vector2)player.transform.position;
+        }
+
         public override Vector2 GetDestination() {
             if (IsPlayerInSight()) {
                 Vector2 destination = GetPathfinderFirstGrid();
@@ -31,7 +39,8 @@ namespace RogueGem.Enemies {
         }
 
         public override int GetATK() {
-            return atk;
+            int damage = UnityEngine.Random.Range(0, 100) < GetCRIT() ? Mathf.FloorToInt(atk * 1.5f) : atk;
+            return damage;
         }
 
         public override int GetCRIT() {

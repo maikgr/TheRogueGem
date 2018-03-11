@@ -7,11 +7,14 @@ using UnityEngine;
 namespace RogueGem.Enemies {
     public class PiersonBehaviour : EnemyBehaviour {
 
-        public string creatureName = "Pierson";
-        public int maxHealth = 5;
-        public int atk = 2;
-        public int def = 0;
-        public int crit = 0;
+        public string creatureName;
+        public int maxHealth;
+        public int atk;
+        public int def;
+        public int crit;
+        public int skillCooldown;
+
+        private StickyWebSkill skill = new StickyWebSkill("Sticky Web", 0, 4, 3);
 
         public override Vector2 GetDestination() {
             Vector2 destination = GetPathfinderFirstGrid();
@@ -19,11 +22,12 @@ namespace RogueGem.Enemies {
         }
 
         public override Skill GetSkill() {
-            return new StickyWebSkill ("Sticky Web", 0, 4, 3);
+            return skill;
         }
 
         public override int GetATK() {
-            return atk;
+            int damage = UnityEngine.Random.Range(0, 100) < GetCRIT() ? Mathf.FloorToInt(atk * 1.5f) : atk;
+            return damage;
         }
 
         public override int GetCRIT() {
@@ -48,6 +52,14 @@ namespace RogueGem.Enemies {
 
         public override int GetSightDistance() {
             return 0;
+        }
+
+        public override void AttackPlayer() {
+            Attack(GetDestination());
+        }
+
+        public override bool IsInAttackRange() {
+            return GetPathfinderFirstGrid() == (Vector2)player.transform.position;
         }
     }
 }

@@ -28,12 +28,21 @@ namespace RogueGem.Enemies {
             return Vector2.zero;
         }
 
+        public override void AttackPlayer() {
+            Attack(GetDestination());
+        }
+
+        public override bool IsInAttackRange() {
+            return GetPathfinderFirstGrid() == (Vector2)player.transform.position;
+        }
+
         public override Skill GetSkill() {
             return new LeechBiteSkill("Leech Bite", 3);
         }
 
         public override int GetATK() {
-            return atk;
+            int damage = UnityEngine.Random.Range(0, 100) < GetCRIT() ? Mathf.FloorToInt(atk * 1.5f) : atk;
+            return damage;
         }
 
         public override int GetCRIT() {

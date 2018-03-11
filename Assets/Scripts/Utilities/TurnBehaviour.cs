@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using System.Diagnostics;
 
 namespace RogueGem.Utilities {
     public class TurnBehaviour : MonoBehaviour{
@@ -17,11 +18,11 @@ namespace RogueGem.Utilities {
         }
 
         void OnEnable() {
-            EventBehaviour.StartListening(GameEvent.PlayerTurnEnd, MoveEnemies);
+            EventBehaviour.StartListening(GameEvent.PlayerTurnEnd, ExecuteEnemyTurn);
         }
 
         void OnDisable() {
-            EventBehaviour.StopListening(GameEvent.PlayerTurnEnd, MoveEnemies);
+            EventBehaviour.StopListening(GameEvent.PlayerTurnEnd, ExecuteEnemyTurn);
         }
 
         public void RegisterEnemy(EnemyBehaviour enemy) {
@@ -32,10 +33,13 @@ namespace RogueGem.Utilities {
             enemies.Remove(enemy);
         }
 
-        private void MoveEnemies() {
+        private void ExecuteEnemyTurn() {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             foreach(EnemyBehaviour enemy in enemies) {
-                enemy.Move();
+                enemy.EnemyTurn();
             }
+            stopwatch.Stop();
             EventBehaviour.TriggerEvent(GameEvent.EnemyTurnEnd);
         }
     }
