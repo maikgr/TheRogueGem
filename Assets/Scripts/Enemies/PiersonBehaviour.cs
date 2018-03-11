@@ -13,8 +13,10 @@ namespace RogueGem.Enemies {
         public int def;
         public int crit;
         public int skillCooldown;
+        public int skillDistance;
+        public int rootTurnsLength;
 
-        private StickyWebSkill skill = new StickyWebSkill("Sticky Web", 0, 4, 3);
+        private int skillDelay;
 
         public override Vector2 GetDestination() {
             Vector2 destination = GetPathfinderFirstGrid();
@@ -22,7 +24,7 @@ namespace RogueGem.Enemies {
         }
 
         public override Skill GetSkill() {
-            return skill;
+            return new StickyWebSkill("Sticky Web", 0, skillDistance, rootTurnsLength);
         }
 
         public override int GetATK() {
@@ -55,10 +57,24 @@ namespace RogueGem.Enemies {
         }
 
         public override void AttackPlayer() {
-            Attack(GetDestination());
+            if (skillDelay.Equals(0)) {
+                GetSkill().Use(this, GetPathfinderFirstGrid() - (Vector2)transform.position, CreatureType.Player);
+                skillDelay = skillCooldown;
+            } else {
+                Attack(GetDestination());
+            }
         }
 
         public override bool IsInAttackRange() {
+            if (skillDelay.Equals(0)) {
+                int xDist = (int)Mathf.Abs(player.transform.position.x - transform.position.x);
+                int yDist = (int)Mathf.Abs(player.transform.position.y - transform.position.y);
+
+                return ((xDist.Equals(0) && yDist < skillDistance)
+                        || (yDist.Equals(0) && xDist < skillDistance));
+            } else {
+                skillDelay = Mathf.Max(0, --skillDelay);
+            }
             return GetPathfinderFirstGrid() == (Vector2)player.transform.position;
         }
     }

@@ -9,13 +9,14 @@ namespace RogueGem.Skills {
         public LeechBiteSkill(string name, int damage)
             : base(name, damage) { }
         
-        public override void Use(PlayerBehaviour player, Vector2 direction) {
-            Vector2 targetPos = (Vector2)player.transform.position + direction;
+        public override void Use(CreatureBehaviour user, Vector2 direction, CreatureType targetType) {
+            Vector2 targetPos = (Vector2)user.transform.position + direction;
             if (!WorldController.IsTileEmpty(targetPos)) {
-                EnemyBehaviour enemy = WorldController.GetGameObjectOnPos(targetPos).GetComponent<EnemyBehaviour>();
-                if (enemy != null) {
-                    enemy.ReceiveDamage(skillDamage);
-                    player.Heal(Mathf.FloorToInt(skillDamage / 2));
+                CreatureBehaviour creature = WorldController.GetGameObjectOnPos(targetPos).GetComponent<CreatureBehaviour>();
+                if (creature != null && creature.GetCreatureType().Equals(targetType)) {
+                    Debug.Log(user.GetName() + " used " + GetName() + " to " + creature.GetName());
+                    creature.ReceiveDamage(skillDamage);
+                    user.Heal(Mathf.FloorToInt(skillDamage / 2));
                 }
             }
         }

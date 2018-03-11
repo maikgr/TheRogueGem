@@ -10,11 +10,11 @@ using System.Diagnostics;
 namespace RogueGem.Utilities {
     public class TurnBehaviour : MonoBehaviour{
         private ICollection<EnemyBehaviour> enemies;
-        private PlayerBehaviour player;
+        private int turnNumber;
 
         void Start() {
             enemies = new List<EnemyBehaviour>();
-            player = FindObjectOfType(typeof(PlayerBehaviour)) as PlayerBehaviour;
+            turnNumber = 0;
         }
 
         void OnEnable() {
@@ -33,13 +33,15 @@ namespace RogueGem.Utilities {
             enemies.Remove(enemy);
         }
 
+        public int GetTurnNumber() {
+            return turnNumber;
+        }
+
         private void ExecuteEnemyTurn() {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
             foreach(EnemyBehaviour enemy in enemies) {
                 enemy.EnemyTurn();
             }
-            stopwatch.Stop();
+            ++turnNumber;
             EventBehaviour.TriggerEvent(GameEvent.EnemyTurnEnd);
         }
     }

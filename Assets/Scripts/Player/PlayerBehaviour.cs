@@ -4,6 +4,7 @@ using RogueGem.Items;
 using UnityEngine;
 using RogueGem.Utilities;
 using RogueGem.Skills;
+using System;
 
 namespace RogueGem.Player {
     public class PlayerBehaviour : CreatureBehaviour {
@@ -50,13 +51,9 @@ namespace RogueGem.Player {
                     if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
                         int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
                         int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
-                        if (!TryMoveBy(horizontal, vertical)) {
-                            EnemyBehaviour enemy;
-                            if (TryInteract(horizontal, vertical, out enemy)) {
-                                AttackController.Attack(this, enemy);
-                                Attack(horizontal, vertical);
-                            }
-                        }
+                        PlayerMovement(horizontal, vertical);
+                    } else if (Input.GetKeyDown(KeyCode.Space)) {
+                        OnTurnEnds();
                     } else if (Input.GetKeyDown(KeyCode.E)) {
                         GetItemOnGround();
                     } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
@@ -94,24 +91,45 @@ namespace RogueGem.Player {
                             inventory.UpdateAmount(activeItemIndex, activeThrowingItem.GetAmount());
                             activeThrowingItem = null;
                         }
-                        activeSkill.Use(this, targetDirection);
+                        activeSkill.Use(this, targetDirection, CreatureType.Enemy);
                         uiBehaviour.CancelAttack();
                         isControllingUI = false;
+                        OnTurnEnds();
                     }
                 }
             }
         }        
 
-        public override void OnAnimationEnds() {
+        private void PlayerMovement(int x, int y) {
+            if (rootedTurnLength > 0) {                
+                AttackEnemy(x, y);
+            } else if (!TryMoveBy(x, y)) {
+                AttackEnemy(x, y);
+            }
+        }
+
+        private void AttackEnemy(int x, int y) {
+            EnemyBehaviour enemy;
+            if (TryInteract(x, y, out enemy)) {
+                AttackController.Attack(this, enemy);
+                Attack(x, y);
+            } else {
+                OnTurnEnds();
+            }
+        }
+
+        public override void OnTurnEnds() {
             Item item;
             if(IsItemOnGround(out item)) {
                 uiBehaviour.UpdateGroundSlot(item);
             } else {
                 uiBehaviour.RemoveItemOnGround();
             }
+            ReduceRootedTurn();
             TogglePlayerTurn();
             EventBehaviour.TriggerEvent(GameEvent.PlayerTurnEnd);
         }
+
         private bool IsItemOnGround(out Item item) {
             int layerMask = LayerMask.GetMask("Items");
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 1f, layerMask);
@@ -166,14 +184,17 @@ namespace RogueGem.Player {
         }
 
         public override void ReceiveDamage(int damage) {
-            damage = Mathf.Max(0, damage - def);
-            currentHp = currentHp - damage;
+            damage = Mathf.Max(0, damage - GetDEF());
+            currentHp = Mathf.Max(0, currentHp - damage);
             Debug.Log("You received " + damage + " damage.");
             uiBehaviour.UpdateHealth(this);
+            if(currentHp <= 0) {
+                OnDead();
+            }
         }
 
-        public void Heal(int amount) {
-            currentHp = Mathf.Clamp(currentHp + amount, 0, maxHp);
+        public override void Heal(int amount) {
+            base.Heal(amount);
             Debug.Log("You have recovered " + amount + " health points.");
             uiBehaviour.UpdateHealth(this);
         }
@@ -196,7 +217,7 @@ namespace RogueGem.Player {
         }
 
         public override int GetATK() {
-            int damage = Random.Range(0, 100) < crit ? Mathf.FloorToInt(atk * 1.5f) : atk;
+            int damage = UnityEngine.Random.Range(0, 100) < crit ? Mathf.FloorToInt(atk * 1.5f) : atk;
             return damage;
         }
 
@@ -218,6 +239,10 @@ namespace RogueGem.Player {
 
         public override void OnDead() {
             Debug.Log("Player is dead");
-        }        
+        }
+
+        public override CreatureType GetCreatureType() {
+            return CreatureType.Player;
+        }
     }
 }

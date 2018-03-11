@@ -15,21 +15,22 @@ namespace RogueGem.Enemies {
         public int sightDistance;
         public int turnToMove;
 
-        private int turnLastMoved;
+        private int turnLeftToMove;
+
         public override Vector2 GetDestination() {
             if (IsPlayerInSight()) {
                 Vector2 toPlayerGrid = GetPathfinderFirstGrid() - (Vector2)transform.position;
                 return new Vector2(toPlayerGrid.x * -1, toPlayerGrid.y * -1);
-            } else if (turnPassed - turnLastMoved > turnToMove) {
-                turnLastMoved = turnPassed;
+            } else if (turnLeftToMove.Equals(0)) {
+                turnLeftToMove = turnToMove;
                 return GetNextRandomGrid();
             }
-
+            turnLeftToMove = Mathf.Max(0, --turnLeftToMove);
             return Vector2.zero;
         }
 
         public override void AttackPlayer() {
-            Attack(GetDestination());
+            GetSkill().Use(this, GetPathfinderFirstGrid() - (Vector2)transform.position, CreatureType.Player);
         }
 
         public override bool IsInAttackRange() {
@@ -37,7 +38,7 @@ namespace RogueGem.Enemies {
         }
 
         public override Skill GetSkill() {
-            return new LeechBiteSkill("Leech Bite", 3);
+            return new LeechBiteSkill("Leech Bite", GetATK());
         }
 
         public override int GetATK() {

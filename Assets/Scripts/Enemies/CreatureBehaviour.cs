@@ -1,5 +1,6 @@
 ﻿using RogueGem.Items;
 using RogueGem.Player;
+using RogueGem.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +8,16 @@ using UnityEngine;
 namespace RogueGem.Enemies {
     public abstract class CreatureBehaviour : MonoBehaviour {
         protected int currentHp;
+        protected int rootedTurnLength;
+        protected TurnBehaviour turnBehaviour;
         private Coroutine animationCoroutine;
 
         void Awake() {
             currentHp = GetMaxHP();
+        }
+
+        void Start() {
+            turnBehaviour = FindObjectOfType(typeof(TurnBehaviour)) as TurnBehaviour;
         }
 
         public abstract string GetName();
@@ -20,12 +27,21 @@ namespace RogueGem.Enemies {
         public abstract int GetCRIT();
         public abstract IEnumerable<Item> GetItemLoot();
         public abstract Vector2 GetDestination();
+        public abstract CreatureType GetCreatureType();
         public abstract void ReceiveDamage(int damage);
-        public abstract void OnAnimationEnds();
+        public abstract void OnTurnEnds();
         public abstract void OnDead();
 
         public int GetCurentHP() {
             return currentHp;
+        }
+
+        public virtual void Root(int turns) {
+            rootedTurnLength = turns;
+        }
+
+        public virtual void Heal(int amount) {
+            currentHp = Mathf.Clamp(currentHp + amount, 0, GetMaxHP());
         }
 
         protected bool TryMoveBy(int xPos, int yPos) {
@@ -47,6 +63,10 @@ namespace RogueGem.Enemies {
             return false;
         }
 
+        protected void ReduceRootedTurn(int amount = 1) {
+            rootedTurnLength = Mathf.Max(0, --rootedTurnLength);
+        }
+
         protected void Attack(int xPos, int yPos) {
             Attack(new Vector2(xPos, yPos));
         }
@@ -61,14 +81,17 @@ namespace RogueGem.Enemies {
             while (animationCoroutine != null) {
                 yield return null;
             }
-            OnAnimationEnds();
+            OnTurnEnds();
         }        
 
         protected virtual bool TryInteract<T> (int xPos, int yPos, out T component)
             where T : Component {
             Vector2 destinationPos = (Vector2)transform.position + new Vector2(xPos, yPos);
             RaycastHit2D hit = Physics2D.Raycast(destinationPos, Vector2.zero);
-            component = hit.transform.GetComponent<T>();
+            component = null;
+            if (hit.transform != null) {
+                component = hit.transform.GetComponent<T>();                
+            }
             if (component != null) {
                 return true;
             }
@@ -87,7 +110,7 @@ namespace RogueGem.Enemies {
                 yield return null;
             }
             GetComponent<SpriteRenderer>().sortingLayerName = "Creatures";
-            OnAnimationEnds();
+            OnTurnEnds();
         }
 
         private IEnumerator AnimateMoving(Vector2 destination) {
@@ -116,5 +139,11 @@ namespace RogueGem.Enemies {
         Fainted,
         Dead,
         Rooted
+    }
+
+    public enum CreatureType {
+        Player,
+        Friendly,
+        Enemy
     }
 }

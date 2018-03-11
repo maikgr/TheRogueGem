@@ -1,4 +1,5 @@
-﻿using RogueGem.Player;
+﻿using RogueGem.Enemies;
+using RogueGem.Player;
 using UnityEngine;
 
 namespace RogueGem.Skills {
@@ -18,7 +19,7 @@ namespace RogueGem.Skills {
             return skillDamage;
         }
         public abstract SkillArea GetSkillArea();
-        public abstract void Use(PlayerBehaviour player, Vector2 direction);
+        public abstract void Use(CreatureBehaviour user, Vector2 direction, CreatureType targetType);
     }
 
     public enum SkillArea {

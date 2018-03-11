@@ -9,9 +9,6 @@ namespace RogueGem.Enemies {
     public abstract class EnemyBehaviour : CreatureBehaviour {
 
         protected EnemyState state;
-        protected int turnPassed;
-        protected int immobilizedOnTurn;
-        protected int immobileTurnLength;
         protected PlayerBehaviour player;
         protected TurnBehaviour turns;
         private Vector2 lastPosition;
@@ -34,14 +31,16 @@ namespace RogueGem.Enemies {
             Debug.Log(GetName() + " received " + damage + " damage.");
             if (currentHp <= 1 && state.Equals(EnemyState.Normal)) {
                 state = EnemyState.Fainted;
+                Debug.Log(GetName() + " has fainted.");
                 OnFainted();
             } else if (state.Equals(EnemyState.Fainted)) {
                 state = EnemyState.Dead;
+                Debug.Log(GetName() + " is dead.");
                 OnDead();
             }
         }
 
-        public override void OnAnimationEnds() {
+        public override void OnTurnEnds() {
             Board board = Board.Instance;
             Node oldNode = new Node(true, lastPosition);
             Node newNode = new Node(false, transform.position);
@@ -52,33 +51,36 @@ namespace RogueGem.Enemies {
         public override void OnDead() {
             currentHp = 0;
             turns.RemoveEnemy(this);
+            Node currentNode = new Node(true, transform.position);
+            Board.Instance.updateBoardNode(currentNode);
             Destroy(gameObject);
         }
 
         public void OnFainted() {
             currentHp = 1;
             GetComponent<SpriteRenderer>().color = Color.gray;
-            SetImmobile(5);
+            base.Root(5);
         }
 
         public void EnemyTurn() {            
-            if (IsInAttackRange()) {
+            if (IsInAttackRange() && state != EnemyState.Fainted) {
                 AttackPlayer();
-                player.ReceiveDamage(GetATK());
-            }else if (IsAbleToMove()) {
+            } else if (IsAbleToMove()) {
                 lastPosition = transform.position;
                 TryMoveBy(GetDestination());
             }
-            ++turnPassed;
         }
 
         private bool IsAbleToMove() {
-            if (turnPassed - immobilizedOnTurn >= immobileTurnLength) {
+            if (rootedTurnLength.Equals(0) && state != EnemyState.Normal) {
                 if (state == EnemyState.Fainted) {
                     GetComponent<SpriteRenderer>().color = Color.white;
                     currentHp = 1;
                 }
                 state = EnemyState.Normal;
+            }
+            if (rootedTurnLength > 0) {
+                rootedTurnLength = Mathf.Max(0, --rootedTurnLength);
             }
             return state == EnemyState.Normal;
         }
@@ -118,19 +120,20 @@ namespace RogueGem.Enemies {
             OnDead();
         }
 
-        public void Root(int turns) {
-            state = EnemyState.Rooted;
-            SetImmobile(turns);
-            Debug.Log(GetName() + " movement has been restricted.");
-        }
-
-        private void SetImmobile(int turns) {
-            immobileTurnLength = turns;
-            immobilizedOnTurn = turnPassed;
+        public override void Root(int turns){
+            if (state.Equals(EnemyState.Normal)) {
+                base.Root(turns);
+                state = EnemyState.Rooted;
+                Debug.Log(GetName() + " movement has been restricted.");
+            }
         }
 
         public EnemyState GetState() {
             return state;
+        }
+
+        public override CreatureType GetCreatureType() {
+            return CreatureType.Enemy;
         }
     }
 }

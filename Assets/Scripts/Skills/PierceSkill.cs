@@ -10,14 +10,15 @@ namespace RogueGem.Skills {
         public PierceSkill(string name, int damage, int distance)
             : base(name, damage, distance) { }
 
-        public override void Use(PlayerBehaviour player, Vector2 direction) {
-            Vector2 attackGridPos = player.transform.position;
+        public override void Use(CreatureBehaviour user, Vector2 direction, CreatureType targetType) {
+            Vector2 attackGridPos = user.transform.position;
             for (int i = 0; i < distance; ++i) {
                 attackGridPos += direction;
                 if (!WorldController.IsTileEmpty(attackGridPos)) {
-                    EnemyBehaviour enemy = WorldController.GetGameObjectOnPos(attackGridPos).GetComponent<EnemyBehaviour>();
-                    if (enemy != null) {
-                        enemy.ReceiveDamage(skillDamage);
+                    CreatureBehaviour creature = WorldController.GetGameObjectOnPos(attackGridPos).GetComponent<CreatureBehaviour>();
+                    if (creature != null && creature.GetCreatureType().Equals(targetType)) {
+                        Debug.Log(user.GetName() + " used " + GetName() + " to " + creature.GetName());
+                        creature.ReceiveDamage(skillDamage);                        
                     }
                 }
             }

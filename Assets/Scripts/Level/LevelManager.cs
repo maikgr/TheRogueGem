@@ -14,8 +14,7 @@ public class LevelManager : MonoBehaviour {
 	private IDictionary<int, GameObject[]> wallPrefabsMap = new Dictionary<int, GameObject[]>();
 	public GameObject exitPrefab;
 
-	public static int numRooms = 2;
-
+	public static int numRooms = 7;
 
 	private int min = 0, max = numRooms - 1;
 	private delegate bool endCondition(int[] p);

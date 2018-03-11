@@ -13,8 +13,9 @@ namespace RogueGem.Skills {
         public AbsorbSkill(string name, int damage)
             : base(name, damage) { }        
 
-        public override void Use(PlayerBehaviour player, Vector2 direction) {
-            Vector2 targetPos = (Vector2)player.transform.position + direction;
+        public override void Use(CreatureBehaviour user, Vector2 direction, CreatureType targetType) {
+            PlayerBehaviour player = user as PlayerBehaviour;
+            Vector2 targetPos = (Vector2)user.transform.position + direction;            
             if (!WorldController.IsTileEmpty(targetPos)) {
                 EnemyBehaviour enemy = WorldController.GetGameObjectOnPos(targetPos).GetComponent<EnemyBehaviour>();
                 if (enemy != null) {
