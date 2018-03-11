@@ -10,8 +10,11 @@ public class LevelManager : MonoBehaviour {
 	private RoomFactory rf;
 	private Transform boardHolder;
 	private int currentLevel = 1;
+	private GameObject bossDialogue;
 	private IDictionary<int, GameObject[]> floorPrefabsMap = new Dictionary<int, GameObject[]>();
 	private IDictionary<int, GameObject[]> wallPrefabsMap = new Dictionary<int, GameObject[]>();
+	private GameObject player;
+
 	public GameObject exitPrefab;
 
 	public static int numRooms = 7;
@@ -23,11 +26,14 @@ public class LevelManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		board = Board.Instance;
+		player = GameObject.FindGameObjectWithTag ("Player");
 		LoadPrefabs ();		
 		rf = GetComponent<RoomFactory>();
+		bossDialogue = GameObject.Find ("BossDialogue");
 		LoadTemplates ();
 		LoadLevel ();
 		RenderLevel (currentLevel);
+		//BossLevelPart1(10);
 		EventBehaviour.StartListening (GameEvent.NextLevel, newLevel);
 	}
 
@@ -227,7 +233,6 @@ public class LevelManager : MonoBehaviour {
 			}
 		}
 
-		GameObject player = GameObject.FindGameObjectWithTag ("Player");
 		player.SetActive (false);
 		player.transform.position = new Vector2 (specialCoords [0, 0], specialCoords [0, 1]);
 		player.SetActive (true);
@@ -235,12 +240,13 @@ public class LevelManager : MonoBehaviour {
 		exit.transform.SetParent (boardHolder);
 	}
 
-	public void BossLevel(int level) {
+	// Instantiate the level map, turn off UI layer and turn on the boss dialogue
+	public void BossLevelPart1(int level) {
 		boardHolder = new GameObject ("Tiles").transform;
 		int levelType = (level-1)/3 + 1;
 		tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
 
-		int sizeX = 30, sizeY = 30;
+		int sizeX = 20, sizeY = 20;
 		string tile;
 
 		for (int i = 0; i < sizeY; i++) {
@@ -257,13 +263,10 @@ public class LevelManager : MonoBehaviour {
 				goTile.transform.SetParent (boardHolder);
 			}
 		}
-
-		GameObject player = GameObject.FindGameObjectWithTag ("Player");
+			
 		player.SetActive (false);
-		player.transform.position = new Vector2 (15, 1);	
-		player.SetActive (true);
-		// instantiate Mayhoc
-				
+		GameObject.Find("Canvas").GetComponent<Canvas>().enabled = false;
+		bossDialogue.transform.GetChild(0).gameObject.SetActive(true);			
 	}
 
 	public void newLevel() {
@@ -272,14 +275,25 @@ public class LevelManager : MonoBehaviour {
 
 		if (currentLevel == 10) {
 			board.clearBoss ();
-			BossLevel (currentLevel);
+			BossLevelPart1(currentLevel);
 		} else {		
 			board.clear ();
 			LoadLevel ();
 			RenderLevel (currentLevel);
 		}
+	}
 
+	// Instantiate player and Mayhoc (and other sprites and items?)
+	public void BossLevelPart2() {
+		GameObject canvas = GameObject.Find ("Canvas");
+		canvas.GetComponent<Canvas>().enabled = true;
+		canvas.transform.Find("Minimap").gameObject.SetActive(false); // don't need minimap for boss
+		bossDialogue.transform.GetChild(0).gameObject.SetActive(false);
 
+		player.SetActive (true);
+		player.transform.position = new Vector2 (10, 1);	
+
+		// instantiate Mayhoc
 	}
 
 	private int getDirection(char c) {

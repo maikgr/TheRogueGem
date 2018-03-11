@@ -7,10 +7,16 @@ using UnityEngine.UI;
 public class DialogueManager : MonoBehaviour {
 
 	public string sceneName;
+	public string scriptName;
 	public Queue<string> sentences = new Queue<string> ();
 	public Text dialogueText;
 
-	public void LoadLines(string[] s) {		
+	public void Start() {	
+		LoadLines (scriptName);
+	}
+
+	public void LoadLines(string scriptName) {
+		string[] s = Strings.dialogueMap[scriptName];	
 		foreach (string line in s) {
 			sentences.Enqueue (line);
 		}
