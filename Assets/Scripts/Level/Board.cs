@@ -93,4 +93,10 @@ public class Board : MonoBehaviour {
         rooms = new Room[LevelManager.numRooms, LevelManager.numRooms];
         nodes = new Node[LevelManager.numRooms * 8 + 2, LevelManager.numRooms * 8 + 2];
     }
+
+	public void clearBoss() {
+		tiles = new GameObject[30, 30];
+		rooms = new Room[1, 1];
+		nodes = new Node[30, 30];
+	}
 }
