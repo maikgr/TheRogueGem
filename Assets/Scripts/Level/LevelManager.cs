@@ -9,12 +9,12 @@ public class LevelManager : MonoBehaviour {
 	private TileFactory tf;
 	private RoomFactory rf;
 	private Transform boardHolder;
-	private int currentLevel = 1;
+	private int currentLevel = 9;
 	private IDictionary<int, GameObject[]> floorPrefabsMap = new Dictionary<int, GameObject[]>();
 	private IDictionary<int, GameObject[]> wallPrefabsMap = new Dictionary<int, GameObject[]>();
 	public GameObject exitPrefab;
 
-	public static int numRooms = 7;
+	public static int numRooms = 2;
 
 
 	private int min = 0, max = numRooms - 1;
@@ -28,7 +28,7 @@ public class LevelManager : MonoBehaviour {
 		rf = GetComponent<RoomFactory>();
 		LoadTemplates ();
 		LoadLevel ();
-		RenderLevel (1);
+		RenderLevel (currentLevel);
 		EventBehaviour.StartListening (GameEvent.NextLevel, newLevel);
 	}
 
@@ -235,12 +235,51 @@ public class LevelManager : MonoBehaviour {
 		exit.transform.SetParent (boardHolder);
 	}
 
+	public void BossLevel(int level) {
+		boardHolder = new GameObject ("Tiles").transform;
+		int levelType = (level-1)/3 + 1;
+		tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
+
+		int sizeX = 30, sizeY = 30;
+		string tile;
+
+		for (int i = 0; i < sizeY; i++) {
+			for (int j = 0; j < sizeX; j++) {
+				if (i == 0 || i == sizeY - 1 || j == 0 || j == sizeX - 1) {
+					tile = "W";
+				} else {
+					tile = "F";
+				}
+
+				GameObject goTile = Instantiate (tf.makeTile (tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
+				char tileLetter = goTile.gameObject.name [1];
+				board.addNodes (tileLetter != 'W', new Vector2 (j, i));
+				goTile.transform.SetParent (boardHolder);
+			}
+		}
+
+		GameObject player = GameObject.FindGameObjectWithTag ("Player");
+		player.transform.position = new Vector2 (15, 1);	
+
+		// instantiate Mayhoc
+				
+	}
+
 	public void newLevel() {
 		currentLevel++;
 		Destroy (GameObject.Find("Tiles"));
-		board.clear ();
-		LoadLevel ();
-		RenderLevel (currentLevel);
+
+
+		if (currentLevel == 10) {
+			board.clearBoss ();
+			BossLevel (currentLevel);
+		} else {		
+			board.clear ();
+			LoadLevel ();
+			RenderLevel (currentLevel);
+		}
+
+
 	}
 
 	private int getDirection(char c) {
