@@ -25,7 +25,7 @@ namespace RogueGem.Enemies {
         public abstract int GetATK();
         public abstract int GetDEF();
         public abstract int GetCRIT();
-        public abstract IEnumerable<Item> GetItemLoot();
+        public abstract IDictionary<string, int> GetItemDropChance();
         public abstract Vector2 GetDestination();
         public abstract CreatureType GetCreatureType();
         public abstract void ReceiveDamage(int damage);

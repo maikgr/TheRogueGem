@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour {
 	private TileFactory tf;
 	private RoomFactory rf;
 	private Transform boardHolder;
-	private int currentLevel = 9;
+	private int currentLevel = 1;
 	private IDictionary<int, GameObject[]> floorPrefabsMap = new Dictionary<int, GameObject[]>();
 	private IDictionary<int, GameObject[]> wallPrefabsMap = new Dictionary<int, GameObject[]>();
 	public GameObject exitPrefab;
@@ -228,6 +228,7 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		GameObject player = GameObject.FindGameObjectWithTag ("Player");
+        player.SetActive(false);
 		player.transform.position = new Vector2 (specialCoords [0, 0], specialCoords [0, 1]);
 		player.SetActive (true);
 		GameObject exit = Instantiate (tf.exitPrefab, new Vector2 (specialCoords [1, 0], specialCoords [1, 1]), Quaternion.identity) as GameObject;

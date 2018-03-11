@@ -4,6 +4,7 @@ using RogueGem.Skills;
 using RogueGem.Player;
 using System.Collections.Generic;
 using RogueGem.Level;
+using RogueGem.Items;
 
 namespace RogueGem.Enemies {
     public abstract class EnemyBehaviour : CreatureBehaviour {
@@ -53,6 +54,7 @@ namespace RogueGem.Enemies {
             turns.RemoveEnemy(this);
             Node currentNode = new Node(true, transform.position);
             Board.Instance.updateBoardNode(currentNode);
+            DropLoot();
             Destroy(gameObject);
         }
 
@@ -68,6 +70,22 @@ namespace RogueGem.Enemies {
             } else if (IsAbleToMove()) {
                 lastPosition = transform.position;
                 TryMoveBy(GetDestination());
+            }
+        }
+
+        private void DropLoot() {
+            string itemName = string.Empty;
+            List<string> possibleItems = new List<string>();
+            int dice = UnityEngine.Random.Range(0, 101);
+            foreach(var drop in GetItemDropChance()) {
+                if(dice <= drop.Value) {
+                    possibleItems.Add(drop.Key);
+                }
+            }
+
+            if(possibleItems.Count > 0) {
+                itemName = possibleItems[UnityEngine.Random.Range(0, possibleItems.Count)];
+                Instantiate(ItemFactory.GetItem(itemName), transform.position, Quaternion.identity);
             }
         }
 

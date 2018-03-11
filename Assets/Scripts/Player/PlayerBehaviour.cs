@@ -229,7 +229,7 @@ namespace RogueGem.Player {
             return crit;
         }
 
-        public override IEnumerable<Item> GetItemLoot() {
+        public override IDictionary<string, int> GetItemDropChance() {
             return null;
         }
 

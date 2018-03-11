@@ -54,8 +54,11 @@ namespace RogueGem.Enemies {
             return def;
         }
 
-        public override IEnumerable<Item> GetItemLoot() {
-            return null;
+        public override IDictionary<string, int> GetItemDropChance() {
+            Dictionary<string, int> itemDropChance = new Dictionary<string, int>();
+            itemDropChance.Add(ItemFactory.REDBERRY, 75);
+            itemDropChance.Add(ItemFactory.BLUEBERRY, 25);
+            return itemDropChance;
         }
 
         public override int GetMaxHP() {
