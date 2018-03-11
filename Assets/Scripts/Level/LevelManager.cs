@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using RogueGem.Utilities;
 using System.IO;  
 
 public class LevelManager : MonoBehaviour {
@@ -8,20 +9,50 @@ public class LevelManager : MonoBehaviour {
 	private TileFactory tf;
 	private RoomFactory rf;
 	private Transform boardHolder;
+	private int currentLevel = 1;
+	private IDictionary<int, GameObject[]> floorPrefabsMap = new Dictionary<int, GameObject[]>();
+	private IDictionary<int, GameObject[]> wallPrefabsMap = new Dictionary<int, GameObject[]>();
+	public GameObject exitPrefab;
 
-	private int min = 0, max = 3;
+	public static int numRooms = 7;
+
+
+	private int min = 0, max = numRooms - 1;
 	private delegate bool endCondition(int[] p);
 	private int right = 0, left = 1, up = 2, down = 3;
 
 	// Use this for initialization
 	void Start () {
-		boardHolder = new GameObject ("Tiles").transform;
 		board = Board.Instance;
-		tf = GetComponent<TileFactory>();
+		LoadPrefabs ();		
 		rf = GetComponent<RoomFactory>();
 		LoadTemplates ();
 		LoadLevel ();
-		renderLevel ();
+		RenderLevel (1);
+		EventBehaviour.StartListening (GameEvent.NextLevel, newLevel);
+	}
+
+	public void LoadPrefabs() {
+		exitPrefab = Resources.Load<GameObject>("Prefabs/Floors/Exit");
+		GameObject[] gFloors = Resources.LoadAll<GameObject>("Prefabs/Floors/Level1/Floor");
+		GameObject[] gWalls = Resources.LoadAll<GameObject>("Prefabs/Floors/Level1/Wall");
+
+		GameObject[] aFloors = Resources.LoadAll<GameObject>("Prefabs/Floors/Level2/Floor");
+		GameObject[] aWalls = Resources.LoadAll<GameObject>("Prefabs/Floors/Level2/Wall");
+
+		GameObject[] mFloors = Resources.LoadAll<GameObject>("Prefabs/Floors/Level3/Floor");
+		GameObject[] mWalls = Resources.LoadAll<GameObject>("Prefabs/Floors/Level3/Wall");
+
+		floorPrefabsMap [1] = gFloors;
+		floorPrefabsMap [2] = aFloors;
+		floorPrefabsMap [3] = mFloors;
+		floorPrefabsMap [4] = mFloors;
+
+		wallPrefabsMap [1] = gWalls;
+		wallPrefabsMap [2] = aWalls;
+		wallPrefabsMap [3] = mWalls;
+		wallPrefabsMap [4] = mWalls;
+
 	}
 
 	public void LoadTemplates() {
@@ -135,9 +166,12 @@ public class LevelManager : MonoBehaviour {
 		board.addRoom (coords [0], coords [1], endRoom);
 	}
 
-	public void renderLevel() {
-		int cols = 8 * 4,
-		rows = 8 * 4;
+	public void RenderLevel(int level) {
+		boardHolder = new GameObject ("Tiles").transform;
+		int levelType = (level-1)/3 + 1;
+		tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
+		int cols = 8 * numRooms,
+		rows = 8 * numRooms;
 
 		int roomX = 0, roomY = 0;
 
@@ -146,6 +180,8 @@ public class LevelManager : MonoBehaviour {
 			roomCache = rf.getRoom ();
 		
 		string tile;
+		int[,] specialCoords = new int[2, 2];
+		int sInt = 0;
 		for (int i = 0; i < rows+2; i++) {
 			for (int j = 0; j < cols+2; j++) {
 				if (i == 0 || i == rows + 1 || j == 0 || j == cols + 1) {
@@ -154,9 +190,16 @@ public class LevelManager : MonoBehaviour {
 				else {
 					tile = roomCache.getTile (j%8, i%8);
 				}
+
+				if (tile.Equals("X")) { // Start and End tiles
+					specialCoords [sInt, 0] = j;
+					specialCoords [sInt, 1] = i;
+					sInt++;
+				}
+
 				GameObject goTile = Instantiate (tf.makeTile(tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
 				board.addTile (j, i, goTile);
-                char tileLetter = goTile.gameObject.name[0];
+                char tileLetter = goTile.gameObject.name[1];
                 board.addNodes(tileLetter != 'W', new Vector2(j, i));
 				goTile.transform.SetParent (boardHolder);
 
@@ -167,7 +210,7 @@ public class LevelManager : MonoBehaviour {
 					if (roomCache == null)
 						roomCache = rf.getRoom ();
 					
-				} else if (j % 8 == 0 && j!= 32 && i!=0) {
+				} else if (j % 8 == 0 && j!= rows && i!=0) {
 					roomX++;
 
 					roomCache = board.getRoom (roomY, roomX);
@@ -175,7 +218,7 @@ public class LevelManager : MonoBehaviour {
 						roomCache = rf.getRoom ();
 				}
 					
-				if ((i-1) % 8 == 0 && i != 1 && i!= 33 && j == 0) {
+				if ((i-1) % 8 == 0 && i != 1 && i!= cols+1 && j == 0) {
 					roomY++;
 
 					roomCache = board.getRoom (roomY, roomX);
@@ -184,6 +227,20 @@ public class LevelManager : MonoBehaviour {
 				}
 			}
 		}
+
+		GameObject player = GameObject.FindGameObjectWithTag ("Player");
+		player.transform.position = new Vector2 (specialCoords [0, 0], specialCoords [0, 1]);
+		player.SetActive (true);
+		GameObject exit = Instantiate (tf.exitPrefab, new Vector2 (specialCoords [1, 0], specialCoords [1, 1]), Quaternion.identity) as GameObject;
+		exit.transform.SetParent (boardHolder);
+	}
+
+	public void newLevel() {
+		currentLevel++;
+		Destroy (GameObject.Find("Tiles"));
+		board.clear ();
+		LoadLevel ();
+		RenderLevel (currentLevel);
 	}
 
 	private int getDirection(char c) {

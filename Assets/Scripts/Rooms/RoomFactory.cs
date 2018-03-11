@@ -31,7 +31,7 @@ public class RoomFactory : MonoBehaviour {
 			key = "4";
 		} 
 		else {
-		 key = directionToString (entry, exit);
+		 	key = directionToString (entry, exit);
 		}
 		RoomType roomType = roomMap [key];
 		return new Room(roomType.getTemplate (), key);

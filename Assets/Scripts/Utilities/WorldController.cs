@@ -45,20 +45,12 @@ namespace RogueGem.Utilities {
             Node startNode = board.getNode(startPos);
             Node endNode = board.getNode(targetPos);
 
-            List<Node> openSet = new List<Node>();
+            Heap<Node> openSet = new Heap<Node>(board.getBoardXSize() * board.getBoardYSize());
             HashSet<Node> closedSet = new HashSet<Node>();
             openSet.Add(startNode);
-            while (openSet.Count > 0) {
-                Node currentNode = openSet[0];
-                for (int i = 1; i < openSet.Count; ++i) {
-                    if (openSet[i].GetFCost() < currentNode.GetFCost()
-                        || openSet[i].GetFCost() == currentNode.GetFCost()
-                        && openSet[i].GetFCost() < currentNode.GetFCost()) {
-                        currentNode = openSet[i];
-                    }
-                }
 
-                openSet.Remove(currentNode);
+            while (openSet.Count > 0) {
+                Node currentNode = openSet.RemoveFirst();                
                 closedSet.Add(currentNode);
 
                 if (currentNode == endNode) {
@@ -79,6 +71,8 @@ namespace RogueGem.Utilities {
 
                         if (!openSet.Contains(neighbour)) {
                             openSet.Add(neighbour);
+                        } else {
+                            openSet.UpdateItem(neighbour);
                         }
                     }
                 }

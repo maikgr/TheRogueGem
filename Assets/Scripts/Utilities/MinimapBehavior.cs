@@ -4,10 +4,9 @@ using UnityEngine;
 using RogueGem.Utilities;
 
 public class MinimapBehavior : MonoBehaviour {
-	private Board board;
 
 	void Start () {
-		board = Board.Instance;
+		revealTiles ();
 		EventBehaviour.StartListening(GameEvent.MoveEnemy, revealTiles);
 	}
 

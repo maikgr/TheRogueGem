@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TileFactory : MonoBehaviour {
-	[SerializeField]
+class TileFactory {
 	public GameObject[] floorPrefabs;
 	public GameObject[] wallPrefabs;
+	public GameObject exitPrefab;
+
+	public TileFactory (GameObject[] floors, GameObject[] walls, GameObject exit) {
+		floorPrefabs = floors;
+		wallPrefabs = walls;
+		exitPrefab = exit;
+	}
 
 	public Tile makeTile(string type) {
 		GameObject[] pref;

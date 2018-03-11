@@ -59,6 +59,7 @@ namespace RogueGem.Utilities {
 
     public enum GameEvent {
         MoveEnemy,
-        AttackMode
+        AttackMode,
+		NextLevel
     }
 }
