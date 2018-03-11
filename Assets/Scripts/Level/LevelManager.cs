@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.IO;  
 
 public class LevelManager : MonoBehaviour {
-	private Board board = new Board();
+	private Board board;
 	private TileFactory tf;
 	private RoomFactory rf;
+	private Transform boardHolder;
 
 	private int min = 0, max = 3;
 	private delegate bool endCondition(int[] p);
@@ -14,6 +15,8 @@ public class LevelManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		boardHolder = new GameObject ("Tiles").transform;
+		board = Board.Instance;
 		tf = GetComponent<TileFactory>();
 		rf = GetComponent<RoomFactory>();
 		LoadTemplates ();
@@ -151,7 +154,9 @@ public class LevelManager : MonoBehaviour {
 				else {
 					tile = roomCache.getTile (j%8, i%8);
 				}
-				Instantiate (tf.makeTile(tile).getPrefab (), new Vector2 (j, i), Quaternion.identity);
+				GameObject goTile = Instantiate (tf.makeTile(tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
+				board.addTile (j, i, goTile);
+				goTile.transform.SetParent (boardHolder);
 
 				if (j == 0) {
 					roomX = 0;

@@ -19,9 +19,9 @@ namespace RogueGem.Utilities {
         }
 
         public static bool IsTileInSight(Vector2 pos) {
-            Vector2 cameraPos = GameObject.FindGameObjectWithTag("MainCamera").transform.position;
-            return (pos.x >= cameraPos.x - 4 && pos.x <= cameraPos.x + 4
-                    && pos.y >= cameraPos.y - 7.5f && pos.y <= cameraPos.y + 7.5f);
+            Vector2 cameraPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+			return (pos.x >= cameraPos.x - 7.5f && pos.x <= cameraPos.x + 7.5f
+                    && pos.y >= cameraPos.y - 4 && pos.y <= cameraPos.y + 4);
         }
 
         public static IEnumerable<Vector2> GetTilesInSight() {
