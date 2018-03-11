@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using System.Linq;
 
 namespace RogueGem.Utilities {
-    public class UIBehaviour : MonoBehaviour{
+    public class UIBehaviour : MonoBehaviour {
 
         public Text health;
         public Text skill;
@@ -66,14 +66,14 @@ namespace RogueGem.Utilities {
         }
 
         public void LinearAttack(Vector2 attackerPos, Vector2 direction, int distance) {
-            if(parentFx != null) {
+            if (parentFx != null) {
                 CancelAttack();
             }
             CreateAttackParent(attackerPos);
             Vector2 attackGridPos = attackerPos;
-            for(int i = 0; i < distance; ++i) {
+            for (int i = 0; i < distance; ++i) {
                 attackGridPos += direction;
-                Instantiate(attackGridPrefab, attackGridPos, Quaternion.identity, parentFx.transform);                
+                Instantiate(attackGridPrefab, attackGridPos, Quaternion.identity, parentFx.transform);
             }
         }
 
@@ -95,19 +95,5 @@ namespace RogueGem.Utilities {
             parentFx = new GameObject("AttackArea");
             parentFx.transform.position = pos;
         }
-
-        public void DrawNode(Vector2 nodePos) {
-            Instantiate(pathGridPrefab, nodePos, Quaternion.identity, parentPath.transform);
-        }
-
-        public void ResetPath() {
-            Destroy(GameObject.Find("Path"));
-        }
-
-        public void CreateParentPath() {
-            parentPath = new GameObject("Path");
-            parentPath.transform.position = Vector2.zero;
-        }
     }
 }
- 

@@ -58,7 +58,8 @@ namespace RogueGem.Utilities {
     }
 
     public enum GameEvent {
-        MoveEnemy,
+        PlayerTurnEnd,
+        EnemyTurnEnd,
         AttackMode,
 		NextLevel
     }

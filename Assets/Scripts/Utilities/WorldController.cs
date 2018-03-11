@@ -40,7 +40,7 @@ namespace RogueGem.Utilities {
             return tilesInSight;
         }
 
-        public static void FindPath(Vector2 startPos, Vector2 targetPos) {
+        public static IEnumerable<Vector2> FindPath(Vector2 startPos, Vector2 targetPos) {
             Board board = Board.Instance;
             Node startNode = board.getNode(startPos);
             Node endNode = board.getNode(targetPos);
@@ -50,12 +50,11 @@ namespace RogueGem.Utilities {
             openSet.Add(startNode);
 
             while (openSet.Count > 0) {
-                Node currentNode = openSet.RemoveFirst();                
+                Node currentNode = openSet.RemoveFirst();
                 closedSet.Add(currentNode);
 
-                if (currentNode == endNode) {
-                    RetracePath(startNode, endNode);
-                    return;
+                if (currentNode == endNode) {                    
+                    return RetracePath(startNode, endNode);
                 }
 
                 foreach (Node neighbour in board.getNodeNeighbours(currentNode)) {
@@ -77,6 +76,8 @@ namespace RogueGem.Utilities {
                     }
                 }
             }
+
+            return null;
         }
 
         private static int GetDistanceBetweenNode(Node fromNode, Node toNode) {
@@ -87,21 +88,16 @@ namespace RogueGem.Utilities {
             return xDist + yDist;
         }
 
-        private static void RetracePath(Node startNode, Node endNode) {
-            UIBehaviour uiBehaviour = GameObject.Find("GameController").GetComponent<UIBehaviour>();
-            List<Node> path = new List<Node>();
+        private static IEnumerable<Vector2> RetracePath(Node startNode, Node endNode) {
+            List<Vector2> path = new List<Vector2>();
             Node currentNode = endNode;
 
-            while(currentNode != startNode) {
-                path.Add(currentNode);
+            while (currentNode != startNode) {
+                path.Add(currentNode.position);
                 currentNode = currentNode.parentNode;
             }
             path.Reverse();
-            uiBehaviour.ResetPath();
-            uiBehaviour.CreateParentPath();
-            foreach(Node node in path) {
-                uiBehaviour.DrawNode(node.position);
-            }
+            return path;
         }
     }
 }

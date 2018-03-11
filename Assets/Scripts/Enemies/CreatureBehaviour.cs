@@ -92,12 +92,17 @@ namespace RogueGem.Enemies {
 
         private IEnumerator AnimateMoving(Vector2 destination) {
             if (animationCoroutine == null) {
+                //Book next grid by moving collider instantly
+                BoxCollider2D collider = transform.GetComponent<BoxCollider2D>();
+                collider.offset = destination - (Vector2) transform.position;
+
                 transform.GetComponent<SpriteRenderer>().flipX = destination.x < transform.position.x;
                 GetComponent<SpriteRenderer>().sortingLayerName = "Attacker";
                 float t = 0;
                 while (t < 1) {
                     t += Time.deltaTime / 0.2f;
                     transform.position = Vector2.Lerp(transform.position, destination, t);
+                    collider.offset = Vector2.Lerp(collider.offset, Vector2.zero, t);
                     yield return null;
                 }
                 GetComponent<SpriteRenderer>().sortingLayerName = "Default";

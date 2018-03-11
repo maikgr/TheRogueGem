@@ -6,20 +6,24 @@ using UnityEngine;
 namespace RogueGem.Enemies {
     public class SkullyBehaviour : EnemyBehaviour {
 
-        public string creatureName = "Skully";
-        public int maxHealth = 5;
-        public int atk = 2;
-        public int def = 0;
-        public int crit = 0;
+        public string creatureName;
+        public int maxHealth;
+        public int atk;
+        public int def;
+        public int crit;
+        public int sightDistance;
+
+        public override int GetSightDistance() {
+            return sightDistance;
+        }
 
         public override Vector2 GetDestination() {
-            int xMovement = 0;
-            int yMovement = 0;
-            while (xMovement.Equals(0) && yMovement.Equals(0)) {
-                xMovement = Random.Range(-1, 2);
-                yMovement = xMovement.Equals(0) ? Random.Range(-1, 2) : 0;
+            if (IsPlayerInSight()) {
+                Vector2 destination = GetPathfinderFirstGrid();
+                return destination - (Vector2)transform.position;
+            } else {
+                return GetNextRandomGrid();
             }
-            return new Vector2(xMovement, yMovement);
         }
 
         public override Skill GetSkill() {

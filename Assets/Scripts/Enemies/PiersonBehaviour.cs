@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RogueGem.Items;
 using RogueGem.Skills;
 using UnityEngine;
@@ -13,13 +14,8 @@ namespace RogueGem.Enemies {
         public int crit = 0;
 
         public override Vector2 GetDestination() {
-            int xMovement = 0;
-            int yMovement = 0;
-            while (xMovement.Equals(0) && yMovement.Equals(0)) {
-                xMovement = Random.Range(-1, 2);
-                yMovement = xMovement.Equals(0) ? Random.Range(-1, 2) : 0;
-            }
-            return new Vector2(xMovement, yMovement);
+            Vector2 destination = GetPathfinderFirstGrid();
+            return destination - (Vector2)transform.position;
         }
 
         public override Skill GetSkill() {
@@ -48,6 +44,10 @@ namespace RogueGem.Enemies {
 
         public override string GetName() {
             return creatureName;
+        }
+
+        public override int GetSightDistance() {
+            return 0;
         }
     }
 }

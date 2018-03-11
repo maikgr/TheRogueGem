@@ -7,7 +7,7 @@ public class MinimapBehavior : MonoBehaviour {
 
 	void Start () {
 		revealTiles ();
-		EventBehaviour.StartListening(GameEvent.MoveEnemy, revealTiles);
+		EventBehaviour.StartListening(GameEvent.PlayerTurnEnd, revealTiles);
 	}
 
 	public void revealTiles() {

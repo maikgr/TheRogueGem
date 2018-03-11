@@ -76,6 +76,10 @@ public class Board : MonoBehaviour {
         return neighbours;
     }
 
+    public void updateBoardNode(Node node) {
+        nodes[(int)node.position.x, (int)node.position.y] = node;
+    }
+
     public int getBoardXSize() {
         return xSize;
     }

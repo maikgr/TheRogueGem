@@ -17,7 +17,6 @@ namespace RogueGem.Skills {
             Vector2 attackGridPos = player.transform.position;
             for (int i = 0; i < distance; ++i) {
                 attackGridPos += direction;
-                Debug.Log("Checking object on pos " + attackGridPos);
                 if (!WorldController.IsTileEmpty(attackGridPos)) {
                     EnemyBehaviour enemy = WorldController.GetGameObjectOnPos(attackGridPos).GetComponent<EnemyBehaviour>();
                     if (enemy != null) {

@@ -20,7 +20,7 @@ namespace RogueGem.Skills {
                 if (enemy != null) {
                     Debug.Log("You tries to absorb " + enemy.GetName() + "...");
                     if (enemy.GetState() == EnemyState.Fainted) {
-                        enemy.ReceiveDamage(GetDamage());
+                        enemy.Absorb();
                         player.SetSkill(enemy.GetSkill());
                         Debug.Log("You acquired " + enemy.GetSkill().GetName() + "!");
                     } else {

@@ -14,7 +14,7 @@ namespace RogueGem.Player {
 
         private InventoryBehaviour inventory;
         private UIBehaviour uiBehaviour;
-        private bool canMove;
+        private bool isControllingUI;
         private int targetedAttackDistance;
         private Skill defaultSkill;
         private Skill currentSkill;
@@ -22,70 +22,82 @@ namespace RogueGem.Player {
         private Vector2 targetDirection;
         private ThrowingInventoryItem activeThrowingItem;
         private int activeItemIndex;
+        private bool isPlayerTurn;
 
 	    void Start () {
             inventory = GetComponent<InventoryBehaviour>();
             uiBehaviour = FindObjectOfType(typeof(UIBehaviour)) as UIBehaviour;            
-            canMove = true;
+            isControllingUI = false;
             defaultSkill = new AbsorbSkill("Absorb", 1);
             currentSkill = defaultSkill;
+            isPlayerTurn = true;
 
             uiBehaviour.UpdateHealth(this);
             uiBehaviour.SetSkill(currentSkill.GetName());
         }
-	
-	    void Update () {
-            if (canMove) {
-                if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
-                    int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
-                    int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
-                    if (!TryMoveBy(horizontal, vertical)) {
-                        EnemyBehaviour enemy;
-                        if (TryInteract(horizontal, vertical, out enemy)) {
-                            AttackController.Attack(this, enemy);
-                            Attack(horizontal, vertical);
+
+        void OnEnable() {
+            EventBehaviour.StartListening(GameEvent.EnemyTurnEnd, TogglePlayerTurn);
+        }
+
+        void OnDisable() {
+            EventBehaviour.StopListening(GameEvent.EnemyTurnEnd, TogglePlayerTurn);
+        }
+
+        void Update () {
+            if (isPlayerTurn) {
+                if (!isControllingUI) {
+                    if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
+                        int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+                        int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
+                        if (!TryMoveBy(horizontal, vertical)) {
+                            EnemyBehaviour enemy;
+                            if (TryInteract(horizontal, vertical, out enemy)) {
+                                AttackController.Attack(this, enemy);
+                                Attack(horizontal, vertical);
+                            }
                         }
+                    } else if (Input.GetKeyDown(KeyCode.E)) {
+                        GetItemOnGround();
+                    } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                        UseItem(1);
+                    } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                        UseItem(2);
+                    } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                        UseItem(3);
+                    } else if (Input.GetKeyDown(KeyCode.Z)) {
+                        isControllingUI = true;
+                        activeSkill = currentSkill;
+                        PrepareSkill(currentSkill);
+                    } else if (Input.GetKeyDown(KeyCode.X)) {
+                        SetSkill(defaultSkill);
                     }
-                } else if (Input.GetKeyDown(KeyCode.E)) {
-                    GetItemOnGround();
-                } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                    UseItem(1);
-                } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                    UseItem(2);
-                } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                    UseItem(3);
-                } else if (Input.GetKeyDown(KeyCode.Z)) {
-                    canMove = false;
-                    activeSkill = currentSkill;
-                    PrepareSkill(currentSkill);
-                } else if (Input.GetKeyDown(KeyCode.X)) {
-                    SetSkill(defaultSkill);
-                }
-            } else {
-                if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
-                    int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
-                    int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
-                    targetDirection = new Vector2(horizontal, vertical);
-                    switch (activeSkill.GetSkillArea()) {
-                        case SkillArea.Linear:
-                            uiBehaviour.LinearAttack(transform.position, targetDirection, targetedAttackDistance);
-                            break;
-                        case SkillArea.Single:
-                            uiBehaviour.SingleAttack(transform.position, targetDirection);
-                            break;
-                    }                    
-                } else if (Input.GetKeyDown(KeyCode.X)) {
-                    uiBehaviour.CancelAttack();
-                    canMove = true;
-                } else if (Input.GetKeyDown(KeyCode.Z)) {
-                    if (activeThrowingItem != null) {
-                        activeThrowingItem.Use(this);
-                        inventory.UpdateAmount(activeItemIndex, activeThrowingItem.GetAmount());
-                        activeThrowingItem = null;
+                } else {
+                    if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
+                        int horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+                        int vertical = Mathf.Abs(horizontal).Equals(1) ? 0 : (int)(Input.GetAxisRaw("Vertical"));
+                        targetDirection = new Vector2(horizontal, vertical);
+                        switch (activeSkill.GetSkillArea()) {
+                            case SkillArea.Linear:
+                                uiBehaviour.LinearAttack(transform.position, targetDirection, targetedAttackDistance);
+                                break;
+                            case SkillArea.Single:
+                                uiBehaviour.SingleAttack(transform.position, targetDirection);
+                                break;
+                        }
+                    } else if (Input.GetKeyDown(KeyCode.X)) {
+                        uiBehaviour.CancelAttack();
+                        isControllingUI = false;
+                    } else if (Input.GetKeyDown(KeyCode.Z)) {
+                        if (activeThrowingItem != null) {
+                            activeThrowingItem.Use(this);
+                            inventory.UpdateAmount(activeItemIndex, activeThrowingItem.GetAmount());
+                            activeThrowingItem = null;
+                        }
+                        activeSkill.Use(this, targetDirection);
+                        uiBehaviour.CancelAttack();
+                        isControllingUI = false;
                     }
-                    activeSkill.Use(this, targetDirection);
-                    uiBehaviour.CancelAttack();                    
-                    canMove = true;
                 }
             }
         }        
@@ -97,7 +109,8 @@ namespace RogueGem.Player {
             } else {
                 uiBehaviour.RemoveItemOnGround();
             }
-            EventBehaviour.TriggerEvent(GameEvent.MoveEnemy);
+            TogglePlayerTurn();
+            EventBehaviour.TriggerEvent(GameEvent.PlayerTurnEnd);
         }
         private bool IsItemOnGround(out Item item) {
             int layerMask = LayerMask.GetMask("Items");
@@ -138,7 +151,7 @@ namespace RogueGem.Player {
         }
 
         private void PrepareSkill(Skill skill) {
-            canMove = false;
+            isControllingUI = true;
             targetDirection = new Vector2(1, 0);
             switch (skill.GetSkillArea()) {
                 case SkillArea.Linear:
@@ -150,6 +163,28 @@ namespace RogueGem.Player {
                     uiBehaviour.SingleAttack(transform.position, targetDirection);
                     break;
             }
+        }
+
+        public override void ReceiveDamage(int damage) {
+            damage = Mathf.Max(0, damage - def);
+            currentHp = currentHp - damage;
+            Debug.Log("You received " + damage + " damage.");
+            uiBehaviour.UpdateHealth(this);
+        }
+
+        public void Heal(int amount) {
+            currentHp = Mathf.Clamp(currentHp + amount, 0, maxHp);
+            Debug.Log("You have recovered " + amount + " health points.");
+            uiBehaviour.UpdateHealth(this);
+        }
+
+        public void SetSkill(Skill skill) {
+            currentSkill = skill;
+            uiBehaviour.SetSkill(currentSkill.GetName());
+        }
+
+        private void TogglePlayerTurn() {
+            isPlayerTurn = !isPlayerTurn;
         }
 
         public override string GetName() {
@@ -183,24 +218,6 @@ namespace RogueGem.Player {
 
         public override void OnDead() {
             Debug.Log("Player is dead");
-        }
-
-        public override void ReceiveDamage(int damage) {
-            damage = Mathf.Max(0, damage - def);
-            currentHp = currentHp - damage;
-            Debug.Log("You received " + damage + " damage.");
-            uiBehaviour.UpdateHealth(this);
-        }
-
-		public void Heal(int amount){
-			currentHp = Mathf.Clamp(currentHp + amount, 0, maxHp);
-            Debug.Log("You have recovered " + amount + " health points.");
-            uiBehaviour.UpdateHealth(this);
-        }
-
-        public void SetSkill(Skill skill) {
-            currentSkill = skill;
-            uiBehaviour.SetSkill(currentSkill.GetName());
-        }
+        }        
     }
 }

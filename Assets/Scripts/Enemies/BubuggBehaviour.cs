@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RogueGem.Items;
 using RogueGem.Skills;
 using UnityEngine;
@@ -6,20 +7,25 @@ using UnityEngine;
 namespace RogueGem.Enemies {
     public class BubuggBehaviour : EnemyBehaviour {
 
-        public string creatureName = "Bubugg";
-        public int maxHealth = 5;
-        public int atk = 3;
-        public int def = 1;
-        public int crit = 10;
+        public string creatureName;
+        public int maxHealth;
+        public int atk;
+        public int def;
+        public int crit;
+        public int sightDistance;
+        public int turnToMove;
 
+        private int turnLastMoved;
         public override Vector2 GetDestination() {
-            int xMovement = 0;
-            int yMovement = 0;
-            while (xMovement.Equals(0) && yMovement.Equals(0)) {
-                xMovement = Random.Range(-1, 2);
-                yMovement = xMovement.Equals(0) ? Random.Range(-1, 2) : 0;
+            if (IsPlayerInSight()) {
+                Vector2 toPlayerGrid = GetPathfinderFirstGrid() - (Vector2)transform.position;
+                return new Vector2(toPlayerGrid.x * -1, toPlayerGrid.y * -1);
+            } else if (turnPassed - turnLastMoved > turnToMove) {
+                turnLastMoved = turnPassed;
+                return GetNextRandomGrid();
             }
-            return new Vector2(xMovement, yMovement);
+
+            return Vector2.zero;
         }
 
         public override Skill GetSkill() {
@@ -48,6 +54,10 @@ namespace RogueGem.Enemies {
 
         public override string GetName() {
             return creatureName;
+        }
+
+        public override int GetSightDistance() {
+            return sightDistance;
         }
     }
 }
