@@ -4,10 +4,9 @@ using RogueGem.Level;
 using System.Collections.Generic;
 
 public class Board : MonoBehaviour {
-	const int roomX = 4, roomY = 4;
-	GameObject[,] tiles = new GameObject[34, 34];
-	Room[,] rooms = new Room[roomX, roomY];
-    Node[,] nodes = new Node[34, 34];
+	GameObject[,] tiles = new GameObject[LevelManager.numRooms * 8 + 2, LevelManager.numRooms * 8 + 2];
+	Room[,] rooms = new Room[LevelManager.numRooms, LevelManager.numRooms];
+	Node[,] nodes = new Node[LevelManager.numRooms * 8 + 2, LevelManager.numRooms * 8 + 2];
 	private static Board _instance;
 	public static Board Instance { get { return _instance; } }
 
@@ -52,4 +51,11 @@ public class Board : MonoBehaviour {
     public Node getNode(Vector2 position) {
         return nodes[(int)position.x, (int)position.y];
     }
+
+	public void clear() {
+		tiles = new GameObject[LevelManager.numRooms * 8 + 2, LevelManager.numRooms * 8 + 2];
+		rooms = new Room[LevelManager.numRooms, LevelManager.numRooms];
+		nodes = new Node[LevelManager.numRooms * 8 + 2, LevelManager.numRooms * 8 + 2];
+	}
 }
+
