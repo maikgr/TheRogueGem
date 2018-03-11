@@ -9,7 +9,8 @@ namespace RogueGem.Level {
         public bool isFloor;
         public Vector2 position;
         public int gCost;
-        public int hCost;        
+        public int hCost;
+        public Node parentNode;
 
         public Node(bool isFloor, Vector2 position) {
             this.isFloor = isFloor;

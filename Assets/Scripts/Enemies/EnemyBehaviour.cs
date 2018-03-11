@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using RogueGem.Utilities;
 using RogueGem.Skills;
+using RogueGem.Player;
 
 namespace RogueGem.Enemies {
     public abstract class EnemyBehaviour : CreatureBehaviour {
@@ -9,8 +10,13 @@ namespace RogueGem.Enemies {
         protected int turnPassed;
         protected int immobilizedOnTurn;
         protected int immobileTurnLength;
+        protected PlayerBehaviour player;
 
         public abstract Skill GetSkill();
+
+        void Start() {
+            player = FindObjectOfType(typeof(PlayerBehaviour)) as PlayerBehaviour;
+        }
 
         void OnEnable() {
             EventBehaviour.StartListening(GameEvent.MoveEnemy, Move);
@@ -49,6 +55,7 @@ namespace RogueGem.Enemies {
         }
 
         private void Move() {
+            WorldController.FindPath(transform.position, player.transform.position);
             if (turnPassed - immobilizedOnTurn >= immobileTurnLength) {
                 if (state == EnemyState.Fainted) {
                     GetComponent<SpriteRenderer>().color = Color.white;

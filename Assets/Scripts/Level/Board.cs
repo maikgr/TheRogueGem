@@ -52,4 +52,26 @@ public class Board : MonoBehaviour {
     public Node getNode(Vector2 position) {
         return nodes[(int)position.x, (int)position.y];
     }
+
+    public IEnumerable<Node> getNodeNeighbours(Node sourceNode) {
+        List<Node> neighbours = new List<Node>();
+
+        int xPos = (int)sourceNode.position.x;
+        int yPos = (int)sourceNode.position.y;
+
+        if (!xPos.Equals(0)) {
+            neighbours.Add(nodes[xPos - 1, yPos]);
+        }
+        if (!xPos.Equals(34)) {
+            neighbours.Add(nodes[xPos + 1, yPos]);
+        }
+        if (!yPos.Equals(0)) {
+            neighbours.Add(nodes[xPos, yPos + 1]);
+        }
+        if (!yPos.Equals(34)) {
+            neighbours.Add(nodes[xPos, yPos - 1]);
+        }
+
+        return neighbours;
+    }
 }

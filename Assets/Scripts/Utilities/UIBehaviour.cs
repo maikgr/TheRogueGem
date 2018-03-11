@@ -14,12 +14,14 @@ namespace RogueGem.Utilities {
         public GameObject[] inventorySlot;
         public Texture emptyImage;
         public GameObject attackGridPrefab;
+        public GameObject pathGridPrefab;
 
         private RawImage[] inventorySlotImage;
         private Text[] inventorySlotText;
         private RawImage groundSlotImage;
         private Text groundSlotText;
         private GameObject parentFx;
+        private GameObject parentPath;
 
         void Start() {
             inventorySlotImage = new RawImage[inventorySlot.Length];
@@ -67,7 +69,7 @@ namespace RogueGem.Utilities {
             if(parentFx != null) {
                 CancelAttack();
             }
-            CreateParentObject(attackerPos);
+            CreateAttackParent(attackerPos);
             Vector2 attackGridPos = attackerPos;
             for(int i = 0; i < distance; ++i) {
                 attackGridPos += direction;
@@ -79,7 +81,7 @@ namespace RogueGem.Utilities {
             if (parentFx != null) {
                 CancelAttack();
             }
-            CreateParentObject(attackerPos);
+            CreateAttackParent(attackerPos);
             Vector2 attackGridPos = attackerPos + direction;
             Instantiate(attackGridPrefab, attackGridPos, Quaternion.identity, parentFx.transform);
         }
@@ -89,9 +91,22 @@ namespace RogueGem.Utilities {
             parentFx = null;
         }
 
-        private void CreateParentObject(Vector2 pos) {
+        private void CreateAttackParent(Vector2 pos) {
             parentFx = new GameObject("AttackArea");
             parentFx.transform.position = pos;
+        }
+
+        public void DrawNode(Vector2 nodePos) {
+            Instantiate(pathGridPrefab, nodePos, Quaternion.identity, parentPath.transform);
+        }
+
+        public void ResetPath() {
+            Destroy(GameObject.Find("Path"));
+        }
+
+        public void CreateParentPath() {
+            parentPath = new GameObject("Path");
+            parentPath.transform.position = Vector2.zero;
         }
     }
 }
