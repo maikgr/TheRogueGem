@@ -5,6 +5,7 @@ using UnityEngine;
 using RogueGem.Utilities;
 using RogueGem.Skills;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace RogueGem.Player {
     public class PlayerBehaviour : CreatureBehaviour {
@@ -246,6 +247,7 @@ namespace RogueGem.Player {
 
         public override void OnDead() {
 			MessagesController.DisplayMessage("You died.");
+            SceneManager.LoadScene("GameOverDie");
         }
 
         public override CreatureType GetCreatureType() {

@@ -77,7 +77,7 @@ namespace RogueGem.Enemies {
         }
 
         protected IEnumerator MoveTo(Vector2 destination) {
-            animationCoroutine = StartCoroutine(AnimateMoving(destination));
+            animationCoroutine = StartCoroutine(AnimateMoving(destination, true));
             while (animationCoroutine != null) {
                 yield return null;
             }
@@ -101,11 +101,11 @@ namespace RogueGem.Enemies {
         protected IEnumerator AttackEnemyOn(Vector2 targetPos) {
             Vector2 initialPos = transform.position;
             GetComponent<SpriteRenderer>().sortingLayerName = "Attacker";
-            animationCoroutine = StartCoroutine(AnimateMoving(targetPos));
+            animationCoroutine = StartCoroutine(AnimateMoving(targetPos, false));
             while (animationCoroutine != null) {
                 yield return null;
             }
-            animationCoroutine = StartCoroutine(AnimateMoving(initialPos));
+            animationCoroutine = StartCoroutine(AnimateMoving(initialPos, false));
             while (animationCoroutine != null) {
                 yield return null;
             }
@@ -113,11 +113,13 @@ namespace RogueGem.Enemies {
             OnTurnEnds();
         }
 
-        private IEnumerator AnimateMoving(Vector2 destination) {
+        private IEnumerator AnimateMoving(Vector2 destination, bool isMoving) {
             if (animationCoroutine == null) {
                 //Book next grid by moving collider instantly
                 BoxCollider2D collider = transform.GetComponent<BoxCollider2D>();
-                collider.offset = destination - (Vector2) transform.position;
+                if (isMoving) {                    
+                    collider.offset = destination - (Vector2)transform.position;
+                }
 
                 transform.GetComponent<SpriteRenderer>().flipX = destination.x < transform.position.x;
                 GetComponent<SpriteRenderer>().sortingLayerName = "Attacker";
@@ -129,6 +131,7 @@ namespace RogueGem.Enemies {
                     yield return null;
                 }
                 GetComponent<SpriteRenderer>().sortingLayerName = "Default";
+                collider.offset = Vector2.zero;
                 animationCoroutine = null;
             }
         }
