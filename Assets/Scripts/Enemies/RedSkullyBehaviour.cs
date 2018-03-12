@@ -4,7 +4,7 @@ using RogueGem.Skills;
 using UnityEngine;
 
 namespace RogueGem.Enemies {
-    public class SkullyBehaviour : EnemyBehaviour {
+    public class RedSkullyBehaviour : EnemyBehaviour {
 
         public string creatureName;
         public int maxHealth;
@@ -52,7 +52,7 @@ namespace RogueGem.Enemies {
         }
 
         public override Skill GetSkill() {
-            return new ThrowingSkill("Pebble Throw", GetATK(), skillDistance);
+            return new ThrowingSkill("Rock Throw", GetATK(), skillDistance);
         }
 
         public override int GetATK() {

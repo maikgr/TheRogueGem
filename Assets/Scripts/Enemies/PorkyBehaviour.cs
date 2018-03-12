@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RogueGem.Items;
 using RogueGem.Skills;
 using UnityEngine;
 
 namespace RogueGem.Enemies {
-    public class SkullyBehaviour : EnemyBehaviour {
+    public class PorkyBehaviour : EnemyBehaviour {
 
         public string creatureName;
         public int maxHealth;
@@ -13,11 +14,15 @@ namespace RogueGem.Enemies {
         public int crit;
         public int sightDistance;
         public int skillCooldown;
-        public int skillDistance;
+
         private int skillDelay;
 
-        public override int GetSightDistance() {
-            return sightDistance;
+        public override Vector2 GetDestination() {
+            if (IsPlayerInSight()) {
+                Vector2 toPlayerGrid = GetPathfinderFirstGrid() - (Vector2)transform.position;
+                return toPlayerGrid;
+            }
+            return GetNextRandomGrid();
         }
 
         public override void AttackPlayer() {
@@ -26,37 +31,19 @@ namespace RogueGem.Enemies {
                 skillDelay = skillCooldown;
             } else {
                 Attack(GetDestination());
+                skillDelay = Mathf.Max(0, --skillDelay);
             }
         }
 
         public override bool IsInAttackRange() {
-            if (skillDelay.Equals(0)) {
-                int xDist = (int)Mathf.Abs(player.transform.position.x - transform.position.x);
-                int yDist = (int)Mathf.Abs(player.transform.position.y - transform.position.y);
-
-                return ((xDist.Equals(0) && yDist < skillDistance)
-                        || (yDist.Equals(0) && xDist < skillDistance));
-            } else {
-                skillDelay = Mathf.Max(0, --skillDelay);
-            }
             return GetPathfinderFirstGrid() == (Vector2)player.transform.position;
         }
 
-        public override Vector2 GetDestination() {
-            if (IsPlayerInSight()) {
-                Vector2 destination = GetPathfinderFirstGrid();
-                return destination - (Vector2)transform.position;
-            } else {
-                return GetNextRandomGrid();
-            }
-        }
-
         public override Skill GetSkill() {
-            return new ThrowingSkill("Pebble Throw", GetATK(), skillDistance);
+            return new LeechBiteSkill("Drain", GetATK());
         }
 
         public override int GetATK() {
-            atk = player.GetDEF() + 1;
             int damage = UnityEngine.Random.Range(0, 100) < GetCRIT() ? Mathf.FloorToInt(atk * 1.5f) : atk;
             return damage;
         }
@@ -71,9 +58,8 @@ namespace RogueGem.Enemies {
 
         public override IDictionary<string, int> GetItemDropChance() {
             Dictionary<string, int> itemDropChance = new Dictionary<string, int>();
-            itemDropChance.Add(ItemFactory.ROCK, 75);
-            itemDropChance.Add(ItemFactory.ROCK_SPIKY, 25);
-            itemDropChance.Add(ItemFactory.RUNE_THUNDER, 10);
+            itemDropChance.Add(ItemFactory.REDBERRY, 75);
+            itemDropChance.Add(ItemFactory.BLUEBERRY, 25);
             return itemDropChance;
         }
 
@@ -83,6 +69,10 @@ namespace RogueGem.Enemies {
 
         public override string GetName() {
             return creatureName;
+        }
+
+        public override int GetSightDistance() {
+            return sightDistance;
         }
     }
 }
