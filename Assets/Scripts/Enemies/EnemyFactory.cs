@@ -14,7 +14,7 @@ namespace RogueGem.Enemies {
             return GetRandomEnemy();
         }
 
-        public static GameObject GetRandomEnemy() {
+		public static GameObject GetRandomEnemy() {
             GameObject[] enemies = Resources.LoadAll<GameObject>("Prefabs/Creatures");
             return enemies[Random.Range(0, enemies.Length)];
         }

@@ -186,7 +186,7 @@ namespace RogueGem.Player {
         public override void ReceiveDamage(int damage) {
             damage = Mathf.Max(0, damage - GetDEF());
             currentHp = Mathf.Max(0, currentHp - damage);
-            Debug.Log("You received " + damage + " damage.");
+			MessagesController.DisplayMessage(Strings.meDamage(damage));
             uiBehaviour.UpdateHealth(this);
             if(currentHp <= 0) {
                 OnDead();
@@ -195,7 +195,7 @@ namespace RogueGem.Player {
 
         public override void Heal(int amount) {
             base.Heal(amount);
-            Debug.Log("You have recovered " + amount + " health points.");
+			MessagesController.DisplayMessage(Strings.healString(amount));
             uiBehaviour.UpdateHealth(this);
         }
 
@@ -238,7 +238,7 @@ namespace RogueGem.Player {
         }
 
         public override void OnDead() {
-            Debug.Log("Player is dead");
+			MessagesController.DisplayMessage("Player is dead");
         }
 
         public override CreatureType GetCreatureType() {

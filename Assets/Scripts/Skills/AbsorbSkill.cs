@@ -19,13 +19,13 @@ namespace RogueGem.Skills {
             if (!WorldController.IsTileEmpty(targetPos)) {
                 EnemyBehaviour enemy = WorldController.GetGameObjectOnPos(targetPos).GetComponent<EnemyBehaviour>();
                 if (enemy != null) {
-                    Debug.Log("You tries to absorb " + enemy.GetName() + "...");
+					MessagesController.DisplayMessage(Strings.absorb(enemy.GetName()));
                     if (enemy.GetState() == EnemyState.Fainted) {
                         enemy.Absorb();
                         player.SetSkill(enemy.GetSkill());
-                        Debug.Log("You acquired " + enemy.GetSkill().GetName() + "!");
+						MessagesController.DisplayMessage(Strings.acquired(enemy.GetSkill().GetName()));
                     } else {
-                        Debug.Log("...but " + enemy.GetName() + " resisted!");
+						MessagesController.DisplayMessage(Strings.resist(enemy.GetName()));
                     }
                 }
             }

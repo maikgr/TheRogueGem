@@ -18,7 +18,7 @@ namespace RogueGem.Skills {
                 if (!WorldController.IsTileEmpty(attackGridPos)) {
                     CreatureBehaviour creature = WorldController.GetGameObjectOnPos(attackGridPos).GetComponent<CreatureBehaviour>();
                     if (creature != null && creature.GetCreatureType().Equals(targetType)) {
-                        Debug.Log(user.GetName() + " used " + GetName() + " to " + creature.GetName());
+						MessagesController.DisplayMessage(Strings.useSkillOn(user.GetName(), GetName(), creature.GetName()));
                         creature.ReceiveDamage(skillDamage);
                         break;
                     }

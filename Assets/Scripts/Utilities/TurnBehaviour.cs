@@ -11,14 +11,17 @@ namespace RogueGem.Utilities {
     public class TurnBehaviour : MonoBehaviour{
         private ICollection<EnemyBehaviour> enemies;
         private int turnNumber;
+		private Transform enemyHolder;
 
         void Start() {
             enemies = new List<EnemyBehaviour>();
             turnNumber = 0;
+			enemyHolder = GameObject.Find("Enemies").transform;
         }
 
         void OnEnable() {
             EventBehaviour.StartListening(GameEvent.PlayerTurnEnd, ExecuteEnemyTurn);
+			EventBehaviour.StartListening(GameEvent.EnemyTurnEnd, SpawnEnemy);
         }
 
         void OnDisable() {
@@ -44,5 +47,33 @@ namespace RogueGem.Utilities {
             ++turnNumber;
             EventBehaviour.TriggerEvent(GameEvent.EnemyTurnEnd);
         }
+
+		// Spawns a new enemy every 10 steps
+		public void SpawnEnemy() {
+			if (LevelManager.currentLevel == 10)
+				return;
+			
+			if (turnNumber % 10 == 0) {
+				int max = LevelManager.numRooms * 8 - 2,
+				min = 1;
+
+				int j = UnityEngine.Random.Range (1, max),
+				i = UnityEngine.Random.Range (1, min);
+
+				Vector2 pos = new Vector2 (i, j);
+				while (!WorldController.IsTileEmpty(pos)) {
+					if (i > max)
+						i = min;
+
+					if (j > max)
+						j = min;
+					
+					pos = UnityEngine.Random.Range(0,1) == 0 ? new Vector2 (i++, j) : new Vector2 (i, j++);
+				}
+				GameObject enemy = Instantiate (EnemyFactory.GetEnemy(LevelManager.currentLevel), pos, Quaternion.identity) as GameObject;
+				enemy.transform.SetParent (enemyHolder);
+
+			}
+		}
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Strings {
 
 	public static string[] Mayhoc1 = new string[] {
-		"New eyes... A mouth...",
+		"You've grown eyes... And a mouth...",
 		"So it's true.",
 		"The Rogue Gem does grant the power of evolution.",
 		"But be warned, little slime.",
@@ -37,5 +37,55 @@ public class Strings {
 		{"boss2a", Mayhoc2a},
 		{"boss2b", Mayhoc2b},
 	};
+
+	public static string healString(int amount) {
+		return "You have recovered " + amount + " health points.";
+	}
+
+	public static string meDamage(int amount) {
+		return "You received " + amount + " damage.";
+	}
+
+	public static string theyDamage(string who, int amount) {
+		return who + " received " + amount + " damage.";
+	}
+
+	public static string inflictDamage(string who, int damage, string enemy) {
+		return who + " inflicted " + damage + " to " + enemy;
+	}
+
+	public static string theyDie(string who) {
+		return who + " is dead.";
+	}
+
+	public static string theyFaint(string who) {
+		return who + " has fainted.";
+	}
+
+	public static string useSkillOn(string name, string skill, string creature) {
+		return name + " used " + skill + " on " + creature + ".";
+	}
+
+	public static string dizzy(string name) {
+		return "You used " + name + ". You feel disoriented...";
+	}
+
+	public static string absorb(string name) {
+		return "You tries to absorb " + name + "...";
+	}
+
+	public static string acquired(string name) {
+		return "You acquired " + name + "!";
+	}
+
+	public static string resist(string name) {
+		return "...but " + name + " resisted!";
+	}
+
+	public static string restrict(string name) {
+		return name + "'s movement has been restricted.";
+	}
+
+
 		
 }

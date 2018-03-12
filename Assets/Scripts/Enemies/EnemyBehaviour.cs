@@ -29,14 +29,14 @@ namespace RogueGem.Enemies {
         public override void ReceiveDamage(int damage) {
             damage = Mathf.Max(0, damage - GetDEF());
             currentHp = currentHp - damage;
-            Debug.Log(GetName() + " received " + damage + " damage.");
+			MessagesController.DisplayMessage(Strings.theyDamage(GetName(), damage));
             if (currentHp <= 1 && state.Equals(EnemyState.Normal)) {
                 state = EnemyState.Fainted;
-                Debug.Log(GetName() + " has fainted.");
+				MessagesController.DisplayMessage(Strings.theyFaint(GetName()));
                 OnFainted();
             } else if (state.Equals(EnemyState.Fainted)) {
                 state = EnemyState.Dead;
-                Debug.Log(GetName() + " is dead.");
+				MessagesController.DisplayMessage(Strings.theyDie(GetName()));
                 OnDead();
             }
         }
@@ -142,7 +142,7 @@ namespace RogueGem.Enemies {
             if (state.Equals(EnemyState.Normal)) {
                 base.Root(turns);
                 state = EnemyState.Rooted;
-                Debug.Log(GetName() + " movement has been restricted.");
+				MessagesController.DisplayMessage(Strings.restrict(GetName()));
             }
         }
 

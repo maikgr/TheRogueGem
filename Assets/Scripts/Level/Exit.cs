@@ -10,7 +10,6 @@ public class Exit : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter2D(Collider2D other) {
-		Debug.Log ("Exit");
 		GetComponent<BoxCollider2D>().isTrigger = false;
 		EventBehaviour.TriggerEvent (GameEvent.NextLevel);
 	}
