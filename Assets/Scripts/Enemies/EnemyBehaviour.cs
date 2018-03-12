@@ -89,7 +89,8 @@ namespace RogueGem.Enemies {
             if(possibleItems.Count > 0) {
                 itemName = possibleItems[UnityEngine.Random.Range(0, possibleItems.Count)];
                 GameObject parentItem = GameObject.Find("Items");
-                Instantiate(ItemFactory.GetItem(itemName), transform.position, Quaternion.identity, parentItem.transform);
+                Vector2 dropPos = new Vector2(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+                Instantiate(ItemFactory.GetItem(itemName), dropPos, Quaternion.identity, parentItem.transform);
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using RogueGem.Utilities;
 using UnityEngine;
+using RogueGem.Player;
 
 public class Exit : MonoBehaviour {
 
@@ -11,6 +12,16 @@ public class Exit : MonoBehaviour {
 	
 	void OnTriggerEnter2D(Collider2D other) {
 		GetComponent<BoxCollider2D>().isTrigger = false;
-		EventBehaviour.TriggerEvent (GameEvent.NextLevel);
+        if (other.tag.Equals("Player")) {
+            StartCoroutine(GoToNextLevel(other.GetComponent<PlayerBehaviour>()));
+        }
 	}
+
+    IEnumerator GoToNextLevel(PlayerBehaviour player) {
+        while (player.IsAnimating()) {
+            yield return null;
+        }
+        EventBehaviour.TriggerEvent(GameEvent.NextLevel);
+    }
+
 }

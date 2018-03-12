@@ -181,7 +181,7 @@ public class LevelManager : MonoBehaviour {
 		enemyHolder = new GameObject ("Enemies").transform;
 		itemHolder = new GameObject ("Items").transform;
 
-		int levelType = (level-1)/3 + 1;
+        int levelType = level; //(level-1)/3 + 1;
 		tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
 		int cols = 8 * numRooms,
 		rows = 8 * numRooms;
@@ -254,9 +254,7 @@ public class LevelManager : MonoBehaviour {
 			}
 		}
 
-		player.SetActive (false);
 		player.transform.position = new Vector2 (specialCoords [0, 0], specialCoords [0, 1]);
-		player.SetActive (true);
 		GameObject exit = Instantiate (tf.exitPrefab, new Vector2 (specialCoords [1, 0], specialCoords [1, 1]), Quaternion.identity) as GameObject;
 		exit.transform.SetParent (boardHolder);
 	}
@@ -264,7 +262,7 @@ public class LevelManager : MonoBehaviour {
 	// Instantiate the level map, turn off UI layer and turn on the boss dialogue
 	public void BossLevelPart1(int level) {
 		boardHolder = new GameObject ("Tiles").transform;
-		int levelType = (level-1)/3 + 1;
+        int levelType = level; //(level-1)/3 + 1;
         tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
 
 		int sizeX = 20, sizeY = 20;
@@ -298,7 +296,7 @@ public class LevelManager : MonoBehaviour {
         Destroy(GameObject.Find("Enemies"));
         Destroy(GameObject.Find("Items"));       
 
-        if (currentLevel == 10) {
+        if (currentLevel == 4) {
 			board.clearBoss ();
 			BossLevelPart1(currentLevel);
 		} else {		
@@ -318,7 +316,7 @@ public class LevelManager : MonoBehaviour {
 		player.SetActive (true);
 		player.transform.position = new Vector2 (10, 1);
 
-        // instantiate Mayhoc        private Vector2 RandomPos() {
+        // instantiate Mayhoc
         Vector2 pos = new Vector2(Random.Range(1, 19), Random.Range(1, 19));
         while (!WorldController.IsTileEmpty(pos)) {
             pos = new Vector2(Random.Range(1, 19), Random.Range(1, 19));

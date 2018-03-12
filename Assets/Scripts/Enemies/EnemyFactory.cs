@@ -20,31 +20,13 @@ namespace RogueGem.Enemies {
             string[] enemyRepo;
             switch (level) {
                 case 1:
-                    enemyRepo = new string[] { SNEK, SLIME, BUBUGG, SLIME };
+                    enemyRepo = new string[] { SNEK, SLIME, BUBUGG, WILDER };
                     break;
                 case 2:
-                    enemyRepo = new string[] { SNEK, SNEK, SLIME, BUBUGG, WILDER };
-                    break;
-                case 3:
-                    enemyRepo = new string[] { SNEK, WILDER, PIERSON };
-                    break;
-                case 4:
-                    enemyRepo = new string[] { PIERSON, WIGGLE_GREEN, SLIME };
-                    break;
-                case 5:
                     enemyRepo = new string[] { WIGGLE_GREEN, WIGGLE_BROWN, SKULLY, HUGGY };
                     break;
-                case 6:
-                    enemyRepo = new string[] { SKULLY, SKULLY_RED, WIGGLE_BROWN, PIERSON, PORKY };
-                    break;
-                case 7:
-                    enemyRepo = new string[] { GOOBER, PIERSON, PORKY, PIERSON, SKULLY_RED, PIERSON };
-                    break;
-                case 8:
-                    enemyRepo = new string[] { GOOBER, GOOBER, PIERSON, SKULLY_RED, WIGGLE_BROWN, HUGGY };
-                    break;
-                case 9:
-                    enemyRepo = new string[] { SKULLY_RED, PIERSON, PIERSON, GOOBER, GOOBER, WIGGLE_BROWN, PORKY, HUGGY };
+                case 3:
+                    enemyRepo = new string[] { SKULLY_RED, PIERSON, PIERSON, GOOBER, PORKY };
                     break;
                 default:
                     enemyRepo = new string[] { SLIME };

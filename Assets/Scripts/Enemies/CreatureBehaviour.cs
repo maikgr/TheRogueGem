@@ -48,6 +48,10 @@ namespace RogueGem.Enemies {
             return TryMoveBy(new Vector2(xPos, yPos));
         }
 
+        public bool IsAnimating() {
+            return animationCoroutine != null;
+        }
+
         protected bool TryMoveBy(Vector2 vector) {
             Vector2 destinationPos = (Vector2)transform.position + vector;
             RaycastHit2D hit = Physics2D.Raycast(destinationPos, Vector2.zero);
