@@ -22,7 +22,7 @@ public class DialogueManager : MonoBehaviour {
 		}
 	}
 
-	public void DisplayNextSentence() {
+	public virtual void DisplayNextSentence() {
 		if (sentences.Count == 0)
 		{
 			EndDialogue ();

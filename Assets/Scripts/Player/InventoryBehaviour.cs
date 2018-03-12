@@ -1,11 +1,7 @@
 ﻿using RogueGem.Items;
 using RogueGem.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace RogueGem.Player {
     public class InventoryBehaviour : MonoBehaviour {
@@ -50,12 +46,7 @@ namespace RogueGem.Player {
                 return false;
             }
 
-            if (item.GetAmount().Equals(0)) {
-                uiBehaviour.EmptyInventory(index);
-                inventory[index] = null;
-            } else {
-                uiBehaviour.UpdateInventory(index, item);
-            }
+            UpdateAmount(index, item.GetAmount());
             return true;            
         }
 
@@ -63,6 +54,7 @@ namespace RogueGem.Player {
             if (newAmount.Equals(0)) {
                 uiBehaviour.EmptyInventory(index);
                 inventory[index] = null;
+                --itemCount;
             } else {
                 uiBehaviour.UpdateInventory(index, inventory[index]);
             }

@@ -17,7 +17,7 @@ public class LevelManager : MonoBehaviour {
 
 	public GameObject exitPrefab;
 
-	public static int numRooms = 7;
+	public static int numRooms = 2;
 
 	private int min = 0, max = numRooms - 1;
 	private delegate bool endCondition(int[] p);
@@ -295,6 +295,10 @@ public class LevelManager : MonoBehaviour {
 
 		// instantiate Mayhoc
 	}
+
+    public int GetCurrentLevel() {
+        return currentLevel;
+    }
 
 	private int getDirection(char c) {
 		if (c == 'r') {

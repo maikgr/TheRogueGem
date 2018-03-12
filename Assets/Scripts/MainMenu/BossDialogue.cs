@@ -6,21 +6,21 @@ using UnityEngine.UI;
 
 public class BossDialogue : DialogueManager {
 
-	public Text name;
+	public Text creatureName;
 	public string scriptName2;
 	public Animator animator;
 
 	private int conversationPart = 1;
 
 
-	public void DisplayNextSentence() {
+	public override void DisplayNextSentence() {
 		if (sentences.Count == 0)
 		{
 			if (conversationPart == 1) {
 				conversationPart++;
 				LoadLines (scriptName2);
 				animator.SetBool("isAppear", true);
-				name.text = "Weird dog with wings???";
+				creatureName.text = "Weird dog with wings???";
 			} else {
 				LevelManager lm = GetComponent<LevelManager> ();
 				lm.BossLevelPart2 ();
