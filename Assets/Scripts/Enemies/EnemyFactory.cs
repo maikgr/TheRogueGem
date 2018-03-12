@@ -60,5 +60,9 @@ namespace RogueGem.Enemies {
             GameObject[] enemies = Resources.LoadAll<GameObject>("Prefabs/Creatures");
             return enemies[Random.Range(0, enemies.Length)];
         }
+
+        public static GameObject GetBossMayhoc() {
+            return Resources.Load<GameObject>("Prefabs/BossMayhoc");
+        }
     }
 }

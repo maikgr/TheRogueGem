@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using RogueGem.Items;
 using RogueGem.Skills;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace RogueGem.Enemies {
     public class BossMayhocBehaviour : EnemyBehaviour {
@@ -89,6 +90,11 @@ namespace RogueGem.Enemies {
 
         public override int GetSightDistance() {
             return 0;
+        }
+
+        public override void OnFainted() {
+            base.OnFainted();
+            SceneManager.LoadScene("GameOverWin");
         }
     }
 }

@@ -40,6 +40,10 @@ namespace RogueGem.Utilities {
             return turnNumber;
         }
 
+        public void Reset() {
+            Start();
+        }
+
         private void ExecuteEnemyTurn() {
             foreach(EnemyBehaviour enemy in enemies) {
                 enemy.EnemyTurn();

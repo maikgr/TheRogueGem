@@ -23,6 +23,9 @@ namespace RogueGem.Enemies {
             turns = FindObjectOfType(typeof(TurnBehaviour)) as TurnBehaviour;
             turns.RegisterEnemy(this);
             lastPosition = transform.position;
+            if (player == null) {
+                Debug.Log(GetName() + " can't find player.");
+            }
             
         }        
 
@@ -58,7 +61,7 @@ namespace RogueGem.Enemies {
             Destroy(gameObject);
         }
 
-        public void OnFainted() {
+        public virtual void OnFainted() {
             currentHp = 1;
             GetComponent<SpriteRenderer>().color = Color.gray;
             base.Root(5);
@@ -85,7 +88,8 @@ namespace RogueGem.Enemies {
 
             if(possibleItems.Count > 0) {
                 itemName = possibleItems[UnityEngine.Random.Range(0, possibleItems.Count)];
-                Instantiate(ItemFactory.GetItem(itemName), transform.position, Quaternion.identity);
+                GameObject parentItem = GameObject.Find("Items");
+                Instantiate(ItemFactory.GetItem(itemName), transform.position, Quaternion.identity, parentItem.transform);
             }
         }
 

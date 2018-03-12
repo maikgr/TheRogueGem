@@ -127,11 +127,12 @@ namespace RogueGem.Enemies {
                 while (t < 1) {
                     t += Time.deltaTime / 0.2f;
                     transform.position = Vector2.Lerp(transform.position, destination, t);
-                    collider.offset = Vector2.Lerp(collider.offset, Vector2.zero, t);
                     yield return null;
                 }
                 GetComponent<SpriteRenderer>().sortingLayerName = "Default";
-                collider.offset = Vector2.zero;
+                if (collider.offset != Vector2.zero) {
+                    collider.offset = Vector2.zero;
+                }
                 animationCoroutine = null;
             }
         }

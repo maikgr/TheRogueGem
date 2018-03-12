@@ -265,7 +265,7 @@ public class LevelManager : MonoBehaviour {
 	public void BossLevelPart1(int level) {
 		boardHolder = new GameObject ("Tiles").transform;
 		int levelType = (level-1)/3 + 1;
-		tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
+        tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
 
 		int sizeX = 20, sizeY = 20;
 		string tile;
@@ -276,11 +276,11 @@ public class LevelManager : MonoBehaviour {
 					tile = "W";
 				} else {
 					tile = "F";
-				}
+				}              
 
-				GameObject goTile = Instantiate (tf.makeTile (tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
+                GameObject goTile = Instantiate (tf.makeTile (tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
 				char tileLetter = goTile.gameObject.name [1];
-				board.addNodes (tileLetter != 'W', new Vector2 (j, i));
+                board.addNodes (tileLetter != 'W', new Vector2 (j, i));
 				goTile.transform.SetParent (boardHolder);
 			}
 		}
@@ -292,9 +292,13 @@ public class LevelManager : MonoBehaviour {
 
 	public void newLevel() {
 		currentLevel++;
-		Destroy (GameObject.Find("Tiles"));
+        TurnBehaviour turns = FindObjectOfType(typeof(TurnBehaviour)) as TurnBehaviour;
+        turns.Reset();
+        Destroy(GameObject.Find("Tiles"));
+        Destroy(GameObject.Find("Enemies"));
+        Destroy(GameObject.Find("Items"));       
 
-		if (currentLevel == 10) {
+        if (currentLevel == 10) {
 			board.clearBoss ();
 			BossLevelPart1(currentLevel);
 		} else {		
@@ -312,10 +316,15 @@ public class LevelManager : MonoBehaviour {
 		bossDialogue.transform.GetChild(0).gameObject.SetActive(false);
 
 		player.SetActive (true);
-		player.transform.position = new Vector2 (10, 1);	
+		player.transform.position = new Vector2 (10, 1);
 
-		// instantiate Mayhoc
-	}
+        // instantiate Mayhoc        private Vector2 RandomPos() {
+        Vector2 pos = new Vector2(Random.Range(1, 19), Random.Range(1, 19));
+        while (!WorldController.IsTileEmpty(pos)) {
+            pos = new Vector2(Random.Range(1, 19), Random.Range(1, 19));
+        }
+        Instantiate(EnemyFactory.GetBossMayhoc(), pos, Quaternion.identity);
+    }
 
     public int GetCurrentLevel() {
         return currentLevel;
