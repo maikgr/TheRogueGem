@@ -20,7 +20,7 @@ namespace RogueGem.Skills {
                 if (!WorldController.IsTileEmpty(attackGridPos)) {
                     CreatureBehaviour creature = WorldController.GetGameObjectOnPos(attackGridPos).GetComponent<CreatureBehaviour>();
                     if (creature != null && creature.GetCreatureType().Equals(targetType)) {
-						MessagesController.DisplayMessage(Strings.useSkillOn(GetName(), GetName(), creature.GetName()));
+						MessagesController.DisplayMessage(Strings.useSkillOn(user.GetName(), GetName(), creature.GetName()));
                         creature.Root(rootTurnsLength);
                         break;
                     }

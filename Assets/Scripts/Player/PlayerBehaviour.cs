@@ -35,6 +35,7 @@ namespace RogueGem.Player {
 
             uiBehaviour.UpdateHealth(this);
             uiBehaviour.SetSkill(currentSkill.GetName());
+            uiBehaviour.HideRemoveSkillKey();
         }
 
         void OnEnable() {
@@ -67,6 +68,7 @@ namespace RogueGem.Player {
                         activeSkill = currentSkill;
                         PrepareSkill(currentSkill);
                     } else if (Input.GetKeyDown(KeyCode.X)) {
+                        uiBehaviour.HideRemoveSkillKey();
                         SetSkill(defaultSkill);
                     }
                 } else {
@@ -202,6 +204,11 @@ namespace RogueGem.Player {
         public void SetSkill(Skill skill) {
             currentSkill = skill;
             uiBehaviour.SetSkill(currentSkill.GetName());
+            if (skill.GetName().Equals("Absorb")) {
+                uiBehaviour.HideRemoveSkillKey();
+            } else {
+                uiBehaviour.ShowRemoveSkillKey();
+            }
         }
 
         private void TogglePlayerTurn() {
@@ -209,7 +216,7 @@ namespace RogueGem.Player {
         }
 
         public override string GetName() {
-            return "Player";
+            return "You";
         }
 
         public override int GetMaxHP() {
@@ -238,7 +245,7 @@ namespace RogueGem.Player {
         }
 
         public override void OnDead() {
-			MessagesController.DisplayMessage("Player is dead");
+			MessagesController.DisplayMessage("You died.");
         }
 
         public override CreatureType GetCreatureType() {

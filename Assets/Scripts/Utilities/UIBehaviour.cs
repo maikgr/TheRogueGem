@@ -15,6 +15,7 @@ namespace RogueGem.Utilities {
         public Texture emptyImage;
         public GameObject attackGridPrefab;
         public GameObject pathGridPrefab;
+        public GameObject removeSkillKey;
 
         private RawImage[] inventorySlotImage;
         private Text[] inventorySlotText;
@@ -89,6 +90,14 @@ namespace RogueGem.Utilities {
         public void CancelAttack() {
             Destroy(parentFx);
             parentFx = null;
+        }
+
+        public void ShowRemoveSkillKey() {
+            removeSkillKey.SetActive(true);
+        }
+
+        public void HideRemoveSkillKey() {
+            removeSkillKey.SetActive(false);
         }
 
         private void CreateAttackParent(Vector2 pos) {

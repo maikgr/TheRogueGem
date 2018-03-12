@@ -49,8 +49,8 @@ namespace RogueGem.Enemies {
 
         public override IDictionary<string, int> GetItemDropChance() {
             Dictionary<string, int> itemDropChance = new Dictionary<string, int>();
-            itemDropChance.Add(ItemFactory.REDBERRY, 75);
-            itemDropChance.Add(ItemFactory.BLUEBERRY, 25);
+            itemDropChance.Add(ItemFactory.REDBERRY, 50);
+            itemDropChance.Add(ItemFactory.BLUEBERRY, 50);
             return itemDropChance;
         }
 

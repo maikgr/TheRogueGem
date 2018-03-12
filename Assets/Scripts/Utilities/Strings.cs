@@ -55,7 +55,7 @@ public class Strings {
 	}
 
 	public static string theyDie(string who) {
-		return who + " is dead.";
+		return who + " has died.";
 	}
 
 	public static string theyFaint(string who) {

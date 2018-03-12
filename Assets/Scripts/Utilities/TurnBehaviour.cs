@@ -68,7 +68,7 @@ namespace RogueGem.Utilities {
 					if (j > max)
 						j = min;
 					
-					pos = UnityEngine.Random.Range(0,1) == 0 ? new Vector2 (i++, j) : new Vector2 (i, j++);
+					pos = UnityEngine.Random.Range(0,2) == 0 ? new Vector2 (i++, j) : new Vector2 (i, j++);
 				}
 				GameObject enemy = Instantiate (EnemyFactory.GetEnemy(LevelManager.currentLevel), pos, Quaternion.identity) as GameObject;
 				enemy.transform.SetParent (enemyHolder);

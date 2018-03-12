@@ -35,7 +35,7 @@ namespace RogueGem.Enemies {
         }
 
         public override int GetATK() {
-            int damage = UnityEngine.Random.Range(0, 100) < GetCRIT() ? Mathf.FloorToInt(atk * 1.5f) : atk;
+            int damage = player.GetDEF() + 1;
             return damage;
         }
 

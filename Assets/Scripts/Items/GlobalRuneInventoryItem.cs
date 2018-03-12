@@ -14,14 +14,14 @@ namespace RogueGem.Items {
 
         public override void Use(PlayerBehaviour player) {
             base.Use(player);
-            player.ReceiveDamage(damage);
-			MessagesController.DisplayMessage(Strings.dizzy(GetName()));
+            player.ReceiveDamage(damage);			
             GameObject[] enemiesObject = GameObject.FindGameObjectsWithTag("Enemy");
             foreach(GameObject enemyObject in enemiesObject) {
                 EnemyBehaviour enemy = enemyObject.GetComponent<EnemyBehaviour>();
 				MessagesController.DisplayMessage(Strings.inflictDamage(GetName(), damage, enemy.GetName()));
                 enemy.ReceiveDamage(damage);
             }
+            MessagesController.DisplayMessage(Strings.dizzy(GetName()));
         }
     }
 }
