@@ -11,12 +11,11 @@ namespace RogueGem.Utilities {
     public class TurnBehaviour : MonoBehaviour{
         private ICollection<EnemyBehaviour> enemies;
         private int turnNumber;
-		private Transform enemyHolder;
 
         void Start() {
             enemies = new List<EnemyBehaviour>();
             turnNumber = 0;
-			enemyHolder = GameObject.Find("Enemies").transform;
+			
         }
 
         void OnEnable() {
@@ -74,9 +73,9 @@ namespace RogueGem.Utilities {
 					
 					pos = UnityEngine.Random.Range(0,2) == 0 ? new Vector2 (i++, j) : new Vector2 (i, j++);
 				}
-				GameObject enemy = Instantiate (EnemyFactory.GetEnemy(LevelManager.currentLevel), pos, Quaternion.identity) as GameObject;
-				enemy.transform.SetParent (enemyHolder);
 
+                Transform enemyHolder = GameObject.Find("Enemies").transform;
+                GameObject enemy = Instantiate (EnemyFactory.GetEnemy(LevelManager.currentLevel), pos, Quaternion.identity, enemyHolder) as GameObject;
 			}
 		}
     }

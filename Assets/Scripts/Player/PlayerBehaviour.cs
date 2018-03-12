@@ -166,8 +166,9 @@ namespace RogueGem.Player {
                     default:
                         item.Use(this);
                         break;
-                }
+                }                
                 inventory.UpdateAmount(index, item.GetAmount());
+                OnTurnEnds();
             }
         }
 

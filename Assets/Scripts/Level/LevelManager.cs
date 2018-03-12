@@ -21,7 +21,7 @@ public class LevelManager : MonoBehaviour {
 
 	public GameObject exitPrefab;
 
-	public static int numRooms = 7;
+	public static int numRooms = 5;
 	public static int currentLevel = 1;
 
 	private int min = 0, max = numRooms - 1;
