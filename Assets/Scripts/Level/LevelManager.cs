@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using RogueGem.Utilities;
+using RogueGem.Enemies;
+using RogueGem.Items;
 using System.IO;  
 
 public class LevelManager : MonoBehaviour {
@@ -9,7 +11,9 @@ public class LevelManager : MonoBehaviour {
 	private TileFactory tf;
 	private RoomFactory rf;
 	private Transform boardHolder;
-	private int currentLevel = 1;
+	private Transform enemyHolder;
+	private Transform itemHolder;
+
 	private GameObject bossDialogue;
 	private IDictionary<int, GameObject[]> floorPrefabsMap = new Dictionary<int, GameObject[]>();
 	private IDictionary<int, GameObject[]> wallPrefabsMap = new Dictionary<int, GameObject[]>();
@@ -17,7 +21,8 @@ public class LevelManager : MonoBehaviour {
 
 	public GameObject exitPrefab;
 
-	public static int numRooms = 2;
+	public static int numRooms = 7;
+	public static int currentLevel = 1;
 
 	private int min = 0, max = numRooms - 1;
 	private delegate bool endCondition(int[] p);
@@ -173,6 +178,9 @@ public class LevelManager : MonoBehaviour {
 
 	public void RenderLevel(int level) {
 		boardHolder = new GameObject ("Tiles").transform;
+		enemyHolder = new GameObject ("Enemies").transform;
+		itemHolder = new GameObject ("Items").transform;
+
 		int levelType = (level-1)/3 + 1;
 		tf = new TileFactory (floorPrefabsMap [levelType], wallPrefabsMap [levelType], exitPrefab);
 		int cols = 8 * numRooms,
@@ -186,6 +194,7 @@ public class LevelManager : MonoBehaviour {
 		
 		string tile;
 		int[,] specialCoords = new int[2, 2];
+		GameObject enemy, goTile, item;
 		int sInt = 0;
 		for (int i = 0; i < rows+2; i++) {
 			for (int j = 0; j < cols+2; j++) {
@@ -202,11 +211,23 @@ public class LevelManager : MonoBehaviour {
 					sInt++;
 				}
 
-				GameObject goTile = Instantiate (tf.makeTile(tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
+				goTile = Instantiate (tf.makeTile(tile).getPrefab (), new Vector2 (j, i), Quaternion.identity) as GameObject;
 				board.addTile (j, i, goTile);
                 char tileLetter = goTile.gameObject.name[1];
                 board.addNodes(tileLetter != 'W', new Vector2(j, i));
 				goTile.transform.SetParent (boardHolder);
+
+				// Spawn items and enemies
+
+				if (tileLetter != 'W') {
+					if (spawnEnemy ()) {
+						enemy = Instantiate (EnemyFactory.GetEnemy(level), new Vector2 (j, i), Quaternion.identity) as GameObject;
+						enemy.transform.SetParent (enemyHolder);
+					} else if (spawnItem ()) {
+						item = Instantiate (ItemFactory.GetRandomItem (), new Vector2 (j, i), Quaternion.identity) as GameObject;
+						item.transform.SetParent (itemHolder);
+					}
+				}
 
 				if (j == 0) {
 					roomX = 0;
@@ -310,6 +331,27 @@ public class LevelManager : MonoBehaviour {
 		} else {
 			return 3;
 		}
+	}
+
+	private bool spawnEnemy() {
+		int numEnemies = 10; // gives about 15
+		int range = (int) getChance(numEnemies);
+
+		return Random.Range(0, range) == 5;
+	}
+
+	private bool spawnItem() {
+		int numItems = 7,  
+		range = (int) getChance(numItems);
+
+		return Random.Range(0, range) == 5;
+	}
+
+	private float getChance(int numItems) {
+		float numFloorTiles = ((numRooms * 8) * (numRooms * 8)) * 0.7f, 
+		range = 1/(numItems / numFloorTiles);
+
+		return range;
 	}
 
 	private bool isValidMove(int[] c) {
