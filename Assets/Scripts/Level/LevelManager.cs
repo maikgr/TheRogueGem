@@ -42,6 +42,10 @@ public class LevelManager : MonoBehaviour {
 		EventBehaviour.StartListening (GameEvent.NextLevel, newLevel);
 	}
 
+	void Awake () {
+		currentLevel = 1;
+	}
+
 	public void LoadPrefabs() {
 		exitPrefab = Resources.Load<GameObject>("Prefabs/Floors/Exit");
 		GameObject[] gFloors = Resources.LoadAll<GameObject>("Prefabs/Floors/Level1/Floor");
